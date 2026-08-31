@@ -2,28 +2,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { PageHero, Section, SectionHeading, Reveal } from "@/components/site/primitives";
 import { useI18n } from "@/lib/i18n";
-import hq from "@/assets/headquarters.jpg";
-import koreanOffice from "@/assets/korean-contact-office.jpg";
-import koreanConsultant from "@/assets/korean-doctor-consultant.jpg";
+import { loadCmsPage } from "@/lib/cms-page";
 
 export const Route = createFileRoute("/contact")({
-  head: () => ({
-    meta: [
-      { title: "Contact Vesco Science — Seoul HQ OEM / ODM Inquiry" },
-      {
-        name: "description",
-        content:
-          "Connect directly with Vesco Science headquarters in Seoul, Korea for exosome OEM/ODM manufacturing, custom development, global distribution, or clinical sample requests.",
-      },
-      { property: "og:title", content: "Contact Vesco Science — Seoul HQ OEM / ODM Inquiry" },
-      {
-        property: "og:description",
-        content: "Tell us about your product, target market and project timeline. Our Korean biotechnology team responds directly.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  loader: () => loadCmsPage("contact"),
+  head: () => ({ meta: [{ title: "Contact Vesco Science — Seoul HQ" }] }),
   component: Page,
 });
 
@@ -31,28 +14,25 @@ type Errors = Record<string, string>;
 
 function Page() {
   const { t, tx } = useI18n();
+  const cms: any = Route.useLoaderData();
+
+  const hero = cms?.hero ?? {};
+  const info = cms?.info ?? {};
+  const officeSection = cms?.officeSection ?? {};
+  const consultSection = cms?.consultSection ?? {};
+
   const businessTypes = tx<string[]>("contact.businessTypes") ?? [];
   const inquiryTypes = tx<string[]>("contact.inquiryTypes") ?? [];
   const interests = tx<string[]>("contact.productInterests") ?? [];
 
-  const [form, setForm] = useState({
-    name: "",
-    company: "",
-    country: "",
-    email: "",
-    phone: "",
-    businessType: "",
-    inquiryType: "",
-    message: "",
-  });
+  const [form, setForm] = useState({ name:"", company:"", country:"", email:"", phone:"", businessType:"", inquiryType:"", message:"" });
   const [picked, setPicked] = useState<string[]>([]);
   const [fileName, setFileName] = useState("");
   const [errors, setErrors] = useState<Errors>({});
   const [done, setDone] = useState(false);
-
   const [submitting, setSubmitting] = useState(false);
 
-  const set = (k: keyof typeof form, v: string) => setForm((f) => ({ ...f, [k]: v }));
+  const set = (k: keyof typeof form, v: string) => setForm(f => ({...f,[k]:v}));
 
   const validate = () => {
     const e: Errors = {};
@@ -69,183 +49,85 @@ function Page() {
 
   const onSubmit = (ev: React.FormEvent) => {
     ev.preventDefault();
-    if (validate()) {
-      setSubmitting(true);
-      setTimeout(() => {
-        setSubmitting(false);
-        setDone(true);
-      }, 800);
-    }
+    if (validate()) { setSubmitting(true); setTimeout(() => { setSubmitting(false); setDone(true); }, 800); }
   };
 
-  const field =
-    "w-full border border-hairline bg-card px-4 py-3 text-[0.95rem] text-navy outline-none transition-colors focus:border-teal";
+  const field = "w-full border border-hairline bg-card px-4 py-3 text-[0.95rem] text-navy outline-none transition-colors focus:border-teal";
   const labelCls = "text-[0.72rem] font-semibold tracking-[0.12em] uppercase text-navy/70";
 
   return (
     <>
       <PageHero
-        eyebrow={t("contact.eyebrow")}
-        title={t("contact.title")}
-        lead={t("contact.intro")}
-        image={hq}
-        imageAlt="Vesco Science Seoul corporate headquarters exterior"
+        eyebrow={hero.eyebrow ?? t("contact.eyebrow")}
+        title={hero.title ?? t("contact.title")}
+        lead={hero.intro ?? t("contact.intro")}
+        image={hero.image ?? "/assets/headquarters.jpg"}
+        imageAlt="Vesco Science Seoul headquarters"
         crumb={{ label: t("nav.contact"), homeLabel: t("common.breadcrumbHome") }}
       />
 
-      {/* ---------- FORM & ADDRESS SECTION ---------- */}
       <Section>
         <div className="grid gap-14 lg:grid-cols-[1.5fr_1fr]">
           <div>
             {done ? (
               <Reveal>
                 <div className="card-flat p-10">
-                  <h2 className="text-[1.5rem] font-semibold text-navy">
-                    {t("contact.success.title")}
-                  </h2>
-                  <p className="mt-4 text-[1rem] leading-relaxed text-muted-foreground">
-                    {t("contact.success.body")}
-                  </p>
-                  <button
-                    onClick={() => {
-                      setDone(false);
-                      setForm({
-                        name: "",
-                        company: "",
-                        country: "",
-                        email: "",
-                        phone: "",
-                        businessType: "",
-                        inquiryType: "",
-                        message: "",
-                      });
-                      setPicked([]);
-                      setFileName("");
-                    }}
-                    className="mt-8 rounded-sm bg-teal px-6 py-3 text-[0.78rem] font-semibold tracking-[0.14em] uppercase text-[#05231f]"
-                  >
-                    {t("contact.success.again")}
-                  </button>
+                  <h2 className="text-[1.5rem] font-semibold text-navy">{t("contact.success.title")}</h2>
+                  <p className="mt-4 text-[1rem] leading-relaxed text-muted-foreground">{t("contact.success.body")}</p>
+                  <button onClick={() => { setDone(false); setForm({name:"",company:"",country:"",email:"",phone:"",businessType:"",inquiryType:"",message:""}); setPicked([]); setFileName(""); }}
+                    className="mt-8 rounded-sm bg-teal px-6 py-3 text-[0.78rem] font-semibold tracking-[0.14em] uppercase text-[#05231f]">{t("contact.success.again")}</button>
                 </div>
               </Reveal>
             ) : (
               <form onSubmit={onSubmit} noValidate>
                 <SectionHeading eyebrow={t("contact.eyebrow")} title={t("contact.title")} />
                 <div className="mt-10 grid gap-6 sm:grid-cols-2">
-                  {(
-                    [
-                      ["name", "text"],
-                      ["company", "text"],
-                      ["country", "text"],
-                      ["email", "email"],
-                      ["phone", "tel"],
-                    ] as const
-                  ).map(([k, type]) => (
+                  {(["name","company","country","email","phone"] as const).map(k => (
                     <label key={k} className="grid gap-2">
                       <span className={labelCls}>{t(`contact.fields.${k}`)}</span>
-                      <input
-                        type={type}
-                        value={form[k]}
-                        onChange={(e) => set(k, e.target.value)}
-                        className={field}
-                      />
-                      {errors[k] ? (
-                        <span className="text-[0.78rem] text-red-600">{errors[k]}</span>
-                      ) : null}
+                      <input type={k==="email"?"email":k==="phone"?"tel":"text"} value={form[k]} onChange={e=>set(k,e.target.value)} className={field} />
+                      {errors[k] && <span className="text-[0.78rem] text-red-600">{errors[k]}</span>}
                     </label>
                   ))}
-
-                  {(
-                    [
-                      ["businessType", businessTypes],
-                      ["inquiryType", inquiryTypes],
-                    ] as const
-                  ).map(([k, opts]) => (
+                  {(["businessType","inquiryType"] as const).map((k,idx) => (
                     <label key={k} className="grid gap-2">
                       <span className={labelCls}>{t(`contact.fields.${k}`)}</span>
-                      <select
-                        value={form[k]}
-                        onChange={(e) => set(k, e.target.value)}
-                        className={field}
-                      >
+                      <select value={form[k]} onChange={e=>set(k,e.target.value)} className={field}>
                         <option value="">{t("common.select")}</option>
-                        {opts.map((o) => (
-                          <option key={o} value={o}>
-                            {o}
-                          </option>
-                        ))}
+                        {(idx===0?businessTypes:inquiryTypes).map(o=><option key={o} value={o}>{o}</option>)}
                       </select>
-                      {errors[k] ? (
-                        <span className="text-[0.78rem] text-red-600">{errors[k]}</span>
-                      ) : null}
+                      {errors[k] && <span className="text-[0.78rem] text-red-600">{errors[k]}</span>}
                     </label>
                   ))}
                 </div>
-
                 <fieldset className="mt-8">
                   <legend className={labelCls}>{t("contact.fields.productInterest")}</legend>
                   <div className="mt-4 flex flex-wrap gap-2">
-                    {interests.map((i) => {
-                      const on = picked.includes(i);
-                      return (
-                        <button
-                          key={i}
-                          type="button"
-                          onClick={() =>
-                            setPicked((p) => (on ? p.filter((x) => x !== i) : [...p, i]))
-                          }
-                          className={`rounded-sm border px-4 py-2 text-[0.8rem] transition-colors ${
-                            on
-                              ? "border-teal bg-teal text-[#05231f]"
-                              : "border-hairline text-navy hover:border-teal hover:text-science"
-                          }`}
-                        >
-                          {i}
-                        </button>
-                      );
-                    })}
+                    {interests.map(i=>{const on=picked.includes(i);return(
+                      <button key={i} type="button" onClick={()=>setPicked(p=>on?p.filter(x=>x!==i):[...p,i])}
+                        className={`rounded-sm border px-4 py-2 text-[0.8rem] transition-colors ${on?"border-teal bg-teal text-[#05231f]":"border-hairline text-navy hover:border-teal hover:text-science"}`}>{i}</button>
+                    );})}
                   </div>
                 </fieldset>
-
                 <label className="mt-8 grid gap-2">
                   <span className={labelCls}>{t("contact.fields.message")}</span>
-                  <textarea
-                    rows={6}
-                    value={form.message}
-                    onChange={(e) => set("message", e.target.value)}
-                    className={field}
-                  />
-                  {errors["message"] ? (
-                    <span className="text-[0.78rem] text-red-600">{errors["message"]}</span>
-                  ) : null}
+                  <textarea rows={6} value={form.message} onChange={e=>set("message",e.target.value)} className={field} />
+                  {errors["message"] && <span className="text-[0.78rem] text-red-600">{errors["message"]}</span>}
                 </label>
-
                 <div className="mt-8 grid gap-2">
                   <span className={labelCls}>{t("contact.fields.file")}</span>
                   <div className="flex flex-wrap items-center gap-4">
                     <label className="cursor-pointer rounded-sm border border-navy/20 px-5 py-3 text-[0.78rem] font-semibold tracking-[0.12em] uppercase text-navy transition-colors hover:border-teal hover:text-science">
                       {t("contact.fields.chooseFile")}
-                      <input
-                        type="file"
-                        className="hidden"
-                        onChange={(e) => setFileName(e.target.files?.[0]?.name ?? "")}
-                      />
+                      <input type="file" className="hidden" onChange={e=>setFileName(e.target.files?.[0]?.name??"")} />
                     </label>
-                    <span className="text-[0.85rem] text-muted-foreground">
-                      {fileName || t("contact.fields.noFile")}
-                    </span>
+                    <span className="text-[0.85rem] text-muted-foreground">{fileName||t("contact.fields.noFile")}</span>
                   </div>
-                  <span className="text-[0.78rem] text-muted-foreground">
-                    {t("contact.fields.fileHint")}
-                  </span>
+                  <span className="text-[0.78rem] text-muted-foreground">{t("contact.fields.fileHint")}</span>
                 </div>
-
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="mt-10 rounded-sm bg-teal px-8 py-4 text-[0.8rem] font-semibold tracking-[0.14em] uppercase text-[#05231f] transition-colors hover:bg-teal/85 disabled:opacity-50"
-                >
-                  {submitting ? "TRANSMITTING TO SEOUL HQ..." : t("contact.submit")}
+                <button type="submit" disabled={submitting}
+                  className="mt-10 rounded-sm bg-teal px-8 py-4 text-[0.8rem] font-semibold tracking-[0.14em] uppercase text-[#05231f] transition-colors hover:bg-teal/85 disabled:opacity-50">
+                  {submitting?"TRANSMITTING TO SEOUL HQ...":t("contact.submit")}
                 </button>
               </form>
             )}
@@ -255,16 +137,10 @@ function Page() {
             <aside className="card-flat p-8">
               <h3 className="text-[1.1rem] font-semibold text-navy">{t("contact.infoTitle")}</h3>
               <dl className="mt-6 grid gap-6">
-                {[
-                  ["infoAddress", "infoAddressValue"],
-                  ["infoEmail", "infoEmailValue"],
-                  ["infoHours", "infoHoursValue"],
-                ].map(([k, v]) => (
-                  <div key={k} className="border-t border-hairline pt-4">
-                    <dt className="text-[0.7rem] font-semibold tracking-[0.16em] uppercase text-science">
-                      {t(`contact.${k}`)}
-                    </dt>
-                    <dd className="mt-2 text-[0.95rem] text-navy">{t(`contact.${v}`)}</dd>
+                {[["Address", info.address ?? t("contact.infoAddressValue")],["Email", info.email ?? t("contact.infoEmailValue")],["Hours", info.hours ?? t("contact.infoHoursValue")]].map(([label, value]) => (
+                  <div key={label} className="border-t border-hairline pt-4">
+                    <dt className="text-[0.7rem] font-semibold tracking-[0.16em] uppercase text-science">{label}</dt>
+                    <dd className="mt-2 text-[0.95rem] text-navy">{value}</dd>
                   </div>
                 ))}
               </dl>
@@ -273,89 +149,29 @@ function Page() {
         </div>
       </Section>
 
-      {/* ---------- KOREAN HEADQUARTERS RECEPTION (IMAGE 2) ---------- */}
+      {/* Office Section */}
       <Section tone="white">
         <div className="grid gap-14 lg:grid-cols-2 lg:items-center">
           <Reveal>
-            <div className="relative">
-              <img
-                src={koreanOffice}
-                alt="Modern reception area of Vesco Science headquarters in Gangnam, Seoul"
-                loading="lazy"
-                width={1280}
-                height={960}
-                className="aspect-[4/3] w-full object-cover"
-              />
-              <div className="absolute -bottom-5 -right-5 hidden border border-hairline bg-card px-6 py-5 md:block">
-                <p className="eyebrow">Seoul Corporate Center</p>
-                <p className="mt-2 text-[0.9rem] text-navy">Gangnam Biotech Business Suite</p>
-              </div>
-            </div>
+            <img src={officeSection.image ?? "/assets/korean-contact-office.jpg"} alt="Seoul office" loading="lazy" className="aspect-[4/3] w-full object-cover" />
           </Reveal>
           <Reveal delay={120}>
-            <div>
-              <SectionHeading
-                eyebrow="Corporate Facility"
-                title="Visit Our Headquarters & Business Suites in Seoul"
-              />
-              <p className="mt-6 text-[1rem] leading-relaxed text-muted-foreground">
-                Located in the heart of Seoul's innovation district, Vesco Science welcomes global clients, clinical brand executives, and distribution partners to inspect product samples and discuss contract manufacturing options.
-              </p>
-              <p className="mt-4 text-[1rem] leading-relaxed text-muted-foreground">
-                Our facilities feature dedicated private consultation suites, sample archive displays, and direct secure video conferencing links with our cGMP production plants.
-              </p>
-            </div>
+            <SectionHeading eyebrow={officeSection.eyebrow ?? "Corporate Facility"} title={officeSection.title ?? "Visit Our Headquarters & Business Suites in Seoul"} />
           </Reveal>
         </div>
       </Section>
 
-      {/* ---------- KOREAN TECHNICAL CONSULTATION (IMAGE 3) ---------- */}
+      {/* Consult Section */}
       <Section tone="white">
         <div className="grid gap-14 lg:grid-cols-2 lg:items-center">
           <Reveal delay={120}>
-            <div>
-              <SectionHeading
-                eyebrow="Direct Scientific Advisory"
-                title="Personalized Technical Consultation with Korean Specialists"
-              />
-              <p className="mt-6 text-[1rem] leading-relaxed text-muted-foreground">
-                When you initiate an inquiry with Vesco Science, your request is reviewed by qualified Korean bio-engineers and formulation advisors — not generic customer service representatives.
-              </p>
-              <p className="mt-4 text-[1rem] leading-relaxed text-muted-foreground">
-                We assist you with exosome bio-compatibility evaluations, PDRN concentration selection, stability testing protocols, and custom primary packaging feasibility to ensure your product succeeds in your target market.
-              </p>
-            </div>
+            <SectionHeading eyebrow={consultSection.eyebrow ?? "Direct Scientific Advisory"} title={consultSection.title ?? "Personalized Technical Consultation"} />
           </Reveal>
           <Reveal>
-            <div className="relative">
-              <img
-                src={koreanConsultant}
-                alt="Korean biotechnology consultant reviewing product specifications and client inquiries on laptop"
-                loading="lazy"
-                width={1280}
-                height={960}
-                className="aspect-[4/3] w-full object-cover"
-              />
-              <div className="absolute -bottom-5 -right-5 hidden border border-hairline bg-card px-6 py-5 md:block">
-                <p className="eyebrow">Technical Advisory</p>
-                <p className="mt-2 text-[0.9rem] text-navy">Bilingual Product Formulation Consultation</p>
-              </div>
-            </div>
+            <img src={consultSection.image ?? "/assets/korean-doctor-consultant.jpg"} alt="Consultation" loading="lazy" className="aspect-[4/3] w-full object-cover" />
           </Reveal>
-        </div>
-      </Section>
-
-      <Section tone="navy">
-        <div className="flex flex-col items-center text-center">
-          <SectionHeading
-            invert
-            eyebrow="Inquiry Commitment"
-            title="Fast Response from Our Seoul HQ Team"
-            intro="All OEM, ODM, distribution, and sample requests are acknowledged within 24 business hours with an initial technical assessment."
-          />
         </div>
       </Section>
     </>
   );
 }
-

@@ -1,0 +1,1 @@
+var e=`/assets/korean-faq-support-center-0RdQk7qI.jpg`;export{e as t};

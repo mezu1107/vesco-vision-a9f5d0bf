@@ -2,11 +2,13 @@ import { createFileRoute } from "@tanstack/react-router";
 import { PageHero, Section, SectionHeading, Reveal } from "@/components/site/primitives";
 import { CTABand } from "@/components/site/CTABand";
 import { useI18n } from "@/lib/i18n";
+import { loadCmsPage } from "@/lib/cms-page";
 import research from "@/assets/research-team.jpg";
 import koreanBioResearchers from "@/assets/korean-bio-researchers.jpg";
 import koreanSeoulCampus from "@/assets/korean-seoul-skyscraper-hub.jpg";
 
 export const Route = createFileRoute("/about/mission")({
+  loader: () => loadCmsPage("about-mission"),
   head: () => ({
     meta: [
       { title: "Our Mission & Vision — Vesco Science Korea" },
@@ -94,7 +96,25 @@ const COPY = {
 
 function Page() {
   const { locale, t } = useI18n();
-  const c = COPY[locale as keyof typeof COPY] ?? COPY.en;
+  const cms: any = Route.useLoaderData();
+  const fallback = COPY[locale as keyof typeof COPY] ?? COPY.en;
+
+  // Merge CMS over fallback — CMS wins if set
+  const c = {
+    eyebrow: cms?.hero?.eyebrow ?? fallback.eyebrow,
+    title: cms?.hero?.title ?? fallback.title,
+    lead: cms?.hero?.lead ?? fallback.lead,
+    missionTitle: cms?.missionTitle ?? fallback.missionTitle,
+    missionBody: cms?.missionBody ?? fallback.missionBody,
+    visionTitle: cms?.visionTitle ?? fallback.visionTitle,
+    visionBody: cms?.visionBody ?? fallback.visionBody,
+    valuesEyebrow: fallback.valuesEyebrow,
+    valuesTitle: fallback.valuesTitle,
+    values: Array.isArray(cms?.values) && cms.values.length > 0 ? cms.values : [...fallback.values],
+  };
+  const heroImage = cms?.hero?.image ?? research;
+  const researchSection = cms?.researchSection ?? {};
+  const seoulSec = cms?.seoulSection ?? {};
 
   return (
     <>
@@ -102,7 +122,7 @@ function Page() {
         eyebrow={c.eyebrow}
         title={c.title}
         lead={c.lead}
-        image={research}
+        image={heroImage}
         imageAlt="Vesco Science Korean research team working in the laboratory"
         crumb={{ label: c.eyebrow, homeLabel: t("common.breadcrumbHome") }}
       />
@@ -130,8 +150,8 @@ function Page() {
           <Reveal>
             <div className="relative">
               <img
-                src={koreanBioResearchers}
-                alt="Korean biotechnology researchers collaborating on exosome precision formulations in Seoul"
+                src={researchSection.image ?? koreanBioResearchers}
+                alt="Korean biotechnology researchers"
                 loading="lazy"
                 width={1280}
                 height={960}
@@ -146,15 +166,12 @@ function Page() {
           <Reveal delay={120}>
             <div>
               <SectionHeading
-                eyebrow="Scientific Rigor"
-                title="Pioneering Korean Cellular & Exosome Research"
+                eyebrow={researchSection.eyebrow ?? "Scientific Rigor"}
+                title={researchSection.title ?? "Pioneering Korean Cellular & Exosome Research"}
               />
-              <p className="mt-6 text-[1rem] leading-relaxed text-muted-foreground">
-                Our scientific commitment is rooted in Korean biotechnology innovation. By combining high-purity exosome isolation techniques with state-of-the-art nanoparticle tracking analysis, we ensure every molecular active meets strict bio-identity standards.
-              </p>
-              <p className="mt-4 text-[1rem] leading-relaxed text-muted-foreground">
-                We believe scientific progress requires continuous verification. Our R&D personnel collaborate with leading academic researchers in Seoul to benchmark nanovesicle stability and bio-absorption efficiency across diverse skin matrices.
-              </p>
+              {researchSection.body1 && <p className="mt-6 text-[1rem] leading-relaxed text-muted-foreground">{researchSection.body1}</p>}
+              {researchSection.body2 && <p className="mt-4 text-[1rem] leading-relaxed text-muted-foreground">{researchSection.body2}</p>}
+              {!researchSection.body1 && (
             </div>
           </Reveal>
         </div>

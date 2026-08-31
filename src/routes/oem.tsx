@@ -1,78 +1,61 @@
 import { createFileRoute } from "@tanstack/react-router";
-import {
-  PageHero,
-  Section,
-  SectionHeading,
-  Reveal,
-  TealButton,
-} from "@/components/site/primitives";
+import { PageHero, Section, SectionHeading, Reveal, TealButton } from "@/components/site/primitives";
 import { CTABand } from "@/components/site/CTABand";
 import { useI18n } from "@/lib/i18n";
-import cleanroom from "@/assets/cleanroom.jpg";
-import documents from "@/assets/documents.jpg";
-import koreanCleanroom from "@/assets/korean-cleanroom-facility.jpg";
+import { loadCmsPage } from "@/lib/cms-page";
 
 export const Route = createFileRoute("/oem")({
-  head: () => ({
-    meta: [
-      { title: "OEM / ODM Manufacturing — Vesco Science Korea" },
-      {
-        name: "description",
-        content:
-          "From concept to commercialization: OEM contract manufacturing, ODM formula development, custom lyophilized exosome production, and global cGMP regulatory support from Seoul, South Korea.",
-      },
-      { property: "og:title", content: "OEM / ODM Manufacturing — Vesco Science Korea" },
-      {
-        property: "og:description",
-        content: "Your biological vision. Our formulation science. One integrated cGMP manufacturing pathway in Korea.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [{ rel: "canonical", href: "/oem" }],
-  }),
+  loader: () => loadCmsPage("oem"),
+  head: () => ({ meta: [{ title: "OEM / ODM Manufacturing — Vesco Science Korea" }] }),
   component: Page,
 });
 
-type Step = { num: string; title: string; body: string };
-
 function Page() {
-  const { t, tx } = useI18n();
-  const oemSteps = tx<string[]>("oem.oemSteps") ?? [];
-  const odmSteps = tx<string[]>("oem.odmSteps") ?? [];
-  const process = tx<Step[]>("oem.process") ?? [];
-  const inputs = tx<string[]>("oem.custom.inputs") ?? [];
-  const privatePoints = tx<string[]>("privateLabel.points") ?? [];
-  const regPoints = tx<string[]>("regulatorySupport.points") ?? [];
+  const { t } = useI18n();
+  const cms: any = Route.useLoaderData();
+
+  const hero = cms?.hero ?? {};
+  const oem = cms?.oem ?? {};
+  const odm = cms?.odm ?? {};
+  const mfgSection = cms?.manufacturingSection ?? {};
+  const process = cms?.process ?? {};
+  const customDev = cms?.customDev ?? {};
+  const privateLabel = cms?.privateLabel ?? {};
+  const regulatory = cms?.regulatory ?? {};
+
+  const oemSteps: string[] = oem.steps ?? [];
+  const odmSteps: string[] = odm.steps ?? [];
+  const processSteps: { num: string; title: string; body: string }[] = process.steps ?? [];
+  const inputs: string[] = customDev.inputs ?? [];
+  const privatePoints: string[] = privateLabel.points ?? [];
+  const regPoints: string[] = regulatory.points ?? [];
 
   return (
     <>
       <PageHero
-        eyebrow={t("oem.eyebrow")}
-        title={t("oem.title")}
-        lead={t("oem.subtitle")}
-        image={cleanroom}
-        imageAlt="Vesco Science cGMP cleanroom facility in South Korea"
+        eyebrow={hero.eyebrow ?? t("oem.eyebrow")}
+        title={hero.title ?? t("oem.title")}
+        lead={hero.subtitle ?? t("oem.subtitle")}
+        image={hero.image ?? "/assets/cleanroom.jpg"}
+        imageAlt="Vesco Science cGMP cleanroom facility"
         crumb={{ label: t("nav.oem"), homeLabel: t("common.breadcrumbHome") }}
       />
 
-      {/* ---------- OEM vs ODM ---------- */}
+      {/* OEM vs ODM */}
       <Section id="models">
         <div className="grid gap-px bg-hairline lg:grid-cols-2">
           {[
-            { title: t("oem.oemTitle"), body: t("oem.oemBody"), steps: oemSteps },
-            { title: t("oem.odmTitle"), body: t("oem.odmBody"), steps: odmSteps },
+            { title: oem.title ?? t("oem.oemTitle"), body: oem.body ?? t("oem.oemBody"), steps: oemSteps },
+            { title: odm.title ?? t("oem.odmTitle"), body: odm.body ?? t("oem.odmBody"), steps: odmSteps },
           ].map((col, i) => (
-            <Reveal key={col.title} delay={i * 80}>
+            <Reveal key={i} delay={i * 80}>
               <div className="h-full bg-card p-8 md:p-10">
                 <h2 className="font-display text-[1.6rem] font-semibold text-navy">{col.title}</h2>
                 <p className="mt-4 text-[1rem] leading-relaxed text-muted-foreground">{col.body}</p>
                 <ol className="mt-8 grid gap-3">
                   {col.steps.map((s, si) => (
-                    <li key={s} className="flex items-center gap-4 border-b border-hairline pb-3">
-                      <span className="font-display text-[0.72rem] font-bold tracking-[0.16em] text-teal">
-                        {String(si + 1).padStart(2, "0")}
-                      </span>
+                    <li key={si} className="flex items-center gap-4 border-b border-hairline pb-3">
+                      <span className="font-display text-[0.72rem] font-bold tracking-[0.16em] text-teal">{String(si + 1).padStart(2, "0")}</span>
                       <span className="text-[0.95rem] text-navy">{s}</span>
                     </li>
                   ))}
@@ -83,149 +66,80 @@ function Page() {
         </div>
       </Section>
 
-      {/* ---------- KOREAN STERILE FILLING & SCALE-UP (IMAGE 3) ---------- */}
+      {/* Manufacturing Section */}
       <Section tone="white">
         <div className="grid gap-14 lg:grid-cols-2 lg:items-center">
           <Reveal>
-            <div className="relative">
-              <img
-                src={koreanCleanroom}
-                alt="Automated aseptic vial filling and lyophilization line in Korea"
-                loading="lazy"
-                width={1280}
-                height={960}
-                className="aspect-[4/3] w-full object-cover"
-              />
-              <div className="absolute -bottom-5 -right-5 hidden border border-hairline bg-card px-6 py-5 md:block">
-                <p className="eyebrow">cGMP Automated Line</p>
-                <p className="mt-2 text-[0.9rem] text-navy">High-Capacity Liquid & Freeze-Drying Facility</p>
-              </div>
-            </div>
+            <img src={mfgSection.image ?? "/assets/korean-cleanroom-facility.jpg"} alt="Manufacturing" loading="lazy" className="aspect-[4/3] w-full object-cover" />
           </Reveal>
           <Reveal delay={120}>
-            <div>
-              <SectionHeading
-                eyebrow="World-Class Scale"
-                title="Advanced Korean Contract Manufacturing Infrastructure"
-              />
-              <p className="mt-6 text-[1rem] leading-relaxed text-muted-foreground">
-                Our manufacturing hub in Korea features Class 100 / ISO Class 5 sterile filling suites, automated capping lines, and multi-shelf lyophilizers. We handle exosome biopreservation, PDRN stabilization, and skin booster formulations under strict cGMP protocols.
-              </p>
-              <p className="mt-4 text-[1rem] leading-relaxed text-muted-foreground">
-                From pilot clinical trial batches to commercial export volumes of over 500,000 vials per month, we deliver uncompromising quality and batch traceability.
-              </p>
-            </div>
+            <SectionHeading eyebrow={mfgSection.eyebrow ?? "World-Class Scale"} title={mfgSection.title ?? "Advanced Korean Contract Manufacturing Infrastructure"} />
+            {mfgSection.body && <p className="mt-6 text-[1rem] leading-relaxed text-muted-foreground">{mfgSection.body}</p>}
           </Reveal>
         </div>
       </Section>
 
-      {/* ---------- 9-STAGE TIMELINE ---------- */}
+      {/* 9-Stage Process */}
       <Section id="process" tone="navy">
-        <SectionHeading invert eyebrow={t("oem.processEyebrow")} title={t("oem.processTitle")} />
+        <SectionHeading invert eyebrow={process.eyebrow ?? t("oem.processEyebrow")} title={process.title ?? t("oem.processTitle")} />
         <ol className="mt-14 relative grid gap-px md:grid-cols-3">
-          <span
-            aria-hidden
-            className="pointer-events-none absolute top-0 bottom-0 left-[27px] w-px bg-gradient-to-b from-teal/60 via-teal/25 to-transparent md:hidden"
-          />
-          {process.map((p, i) => (
-            <Reveal key={p.num} delay={i * 50}>
+          {processSteps.map((p, i) => (
+            <Reveal key={i} delay={i * 50}>
               <li className="relative h-full bg-white/[0.04] p-7 pl-16 outline outline-white/10 md:pl-7">
-                <span className="absolute top-7 left-4 flex h-[26px] w-[26px] items-center justify-center rounded-full border border-teal/50 bg-navy-deep font-display text-[0.65rem] font-bold text-teal md:static md:mb-4 md:flex">
-                  {p.num}
-                </span>
+                <span className="absolute top-7 left-4 flex h-[26px] w-[26px] items-center justify-center rounded-full border border-teal/50 bg-navy-deep font-display text-[0.65rem] font-bold text-teal md:static md:mb-4 md:flex">{p.num}</span>
                 <h3 className="text-[1.05rem] font-semibold text-white md:mt-4">{p.title}</h3>
                 <p className="mt-2 text-[0.9rem] leading-relaxed text-white/60">{p.body}</p>
-                {i < process.length - 1 ? (
-                  <span
-                    aria-hidden
-                    className="absolute right-0 bottom-7 hidden h-px w-6 bg-teal/40 md:block"
-                  />
-                ) : null}
               </li>
             </Reveal>
           ))}
         </ol>
       </Section>
 
-      {/* ---------- CUSTOM FORMULATION ---------- */}
+      {/* Custom Dev */}
       <Section id="custom-formulation" tone="white">
-        <SectionHeading
-          eyebrow={t("oem.custom.eyebrow")}
-          title={t("oem.custom.title")}
-          intro={t("oem.custom.intro")}
-        />
+        <SectionHeading eyebrow={customDev.eyebrow ?? t("oem.custom.eyebrow")} title={customDev.title ?? t("oem.custom.title")} intro={customDev.intro ?? t("oem.custom.intro")} />
         <div className="mt-12 grid gap-px bg-hairline sm:grid-cols-2 lg:grid-cols-3">
-          {inputs.map((inp) => (
-            <div key={inp} className="bg-card px-6 py-5 text-[0.95rem] text-navy">
-              <span className="mr-3 inline-block h-1.5 w-1.5 translate-y-[-2px] bg-teal align-middle" />
-              {inp}
+          {inputs.map((inp, i) => (
+            <div key={i} className="bg-card px-6 py-5 text-[0.95rem] text-navy">
+              <span className="mr-3 inline-block h-1.5 w-1.5 translate-y-[-2px] bg-teal align-middle" />{inp}
             </div>
           ))}
         </div>
         <div className="mt-12 flex flex-wrap gap-3">
-          <TealButton to="/custom-development">{t("oem.custom.cta")}</TealButton>
-          <TealButton to="/contact" variant="outline">
-            {t("nav.cta")}
-          </TealButton>
+          <TealButton to="/custom-development">{customDev.cta ?? t("oem.custom.cta")}</TealButton>
+          <TealButton to="/contact" variant="outline">{t("nav.cta")}</TealButton>
         </div>
       </Section>
 
-      {/* ---------- PRIVATE LABEL (IMAGE 2: DOCUMENTS) ---------- */}
+      {/* Private Label */}
       <Section id="private-label">
-        <div className="grid gap-14 lg:grid-cols-[1.1fr_1fr] lg:items-center">
-          <Reveal>
-            <div>
-              <SectionHeading
-                eyebrow={t("privateLabel.eyebrow")}
-                title={t("privateLabel.title")}
-                intro={t("privateLabel.intro")}
-              />
-              <ul className="mt-10 grid gap-px bg-hairline">
-                {privatePoints.map((p) => (
-                  <li key={p} className="bg-card px-6 py-4 text-[0.95rem] text-navy">
-                    <span className="mr-3 inline-block h-1.5 w-1.5 translate-y-[-2px] bg-teal align-middle" />
-                    {p}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </Reveal>
-          <Reveal delay={120}>
-            <img
-              src={documents}
-              alt="Vesco Science Korean regulatory export documents and certificate packages"
-              loading="lazy"
-              className="aspect-[4/3] w-full object-cover"
-            />
-          </Reveal>
-        </div>
+        <SectionHeading eyebrow={privateLabel.eyebrow ?? t("privateLabel.eyebrow")} title={privateLabel.title ?? t("privateLabel.title")} intro={privateLabel.intro ?? t("privateLabel.intro")} />
+        <ul className="mt-10 grid gap-px bg-hairline">
+          {privatePoints.map((p, i) => (
+            <li key={i} className="bg-card px-6 py-4 text-[0.95rem] text-navy">
+              <span className="mr-3 inline-block h-1.5 w-1.5 translate-y-[-2px] bg-teal align-middle" />{p}
+            </li>
+          ))}
+        </ul>
       </Section>
 
-      {/* ---------- REGULATORY SUPPORT ---------- */}
+      {/* Regulatory */}
       <Section id="regulatory" tone="navy">
-        <SectionHeading
-          invert
-          eyebrow={t("regulatorySupport.eyebrow")}
-          title={t("regulatorySupport.title")}
-          intro={t("regulatorySupport.intro")}
-        />
+        <SectionHeading invert eyebrow={regulatory.eyebrow ?? t("regulatorySupport.eyebrow")} title={regulatory.title ?? t("regulatorySupport.title")} intro={regulatory.intro ?? t("regulatorySupport.intro")} />
         <div className="mt-12 grid gap-px sm:grid-cols-2 lg:grid-cols-3">
           {regPoints.map((p, i) => (
-            <Reveal key={p} delay={i * 50}>
+            <Reveal key={i} delay={i * 50}>
               <div className="h-full bg-white/[0.04] p-6 outline outline-white/10">
-                <span className="font-display text-[0.7rem] font-bold tracking-[0.18em] text-teal">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
+                <span className="font-display text-[0.7rem] font-bold tracking-[0.18em] text-teal">{String(i + 1).padStart(2, "0")}</span>
                 <p className="mt-3 text-[0.95rem] text-white/85">{p}</p>
               </div>
             </Reveal>
           ))}
         </div>
-        <p className="mt-10 max-w-3xl text-[0.85rem] text-white/50">{t("regulatorySupport.note")}</p>
+        {regulatory.note && <p className="mt-10 max-w-3xl text-[0.85rem] text-white/50">{regulatory.note}</p>}
       </Section>
 
       <CTABand />
     </>
   );
 }
-

@@ -1,0 +1,1 @@
+var e=`/assets/korean-international-logistics-SFQjIwEG.jpg`;export{e as t};

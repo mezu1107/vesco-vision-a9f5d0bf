@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as AdminRouteRouteImport } from './routes/admin/route'
+import { Route as AdminLoginRouteImport } from './routes/admin-login'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CustomDevelopmentRouteImport } from './routes/custom-development'
 import { Route as FacilityRouteImport } from './routes/facility'
@@ -23,11 +25,13 @@ import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AboutMissionRouteImport } from './routes/about.mission'
 import { Route as AboutNetworkRouteImport } from './routes/about.network'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as InsightsSlugRouteImport } from './routes/insights.$slug'
 import { Route as ProductsIndexRouteImport } from './routes/products.index'
 import { Route as ProductsSlugRouteImport } from './routes/products.$slug'
 import { Route as TechnologyIndexRouteImport } from './routes/technology.index'
 import { Route as TechnologySlugRouteImport } from './routes/technology.$slug'
+import { Route as AdminPagesSlugRouteImport } from './routes/admin/pages.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -37,6 +41,16 @@ const IndexRoute = IndexRouteImport.update({
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRouteRoute = AdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin-login',
+  path: '/admin-login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -99,6 +113,11 @@ const AboutNetworkRoute = AboutNetworkRouteImport.update({
   path: '/network',
   getParentRoute: () => AboutRoute,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const InsightsSlugRoute = InsightsSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -124,10 +143,17 @@ const TechnologySlugRoute = TechnologySlugRouteImport.update({
   path: '/technology/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminPagesSlugRoute = AdminPagesSlugRouteImport.update({
+  id: '/pages/$slug',
+  path: '/pages/$slug',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
   '/about': typeof AboutRouteWithChildren
+  '/admin-login': typeof AdminLoginRoute
   '/contact': typeof ContactRoute
   '/custom-development': typeof CustomDevelopmentRoute
   '/facility': typeof FacilityRoute
@@ -143,12 +169,15 @@ export interface FileRoutesByFullPath {
   '/insights/$slug': typeof InsightsSlugRoute
   '/products/$slug': typeof ProductsSlugRoute
   '/technology/$slug': typeof TechnologySlugRoute
+  '/admin/': typeof AdminIndexRoute
   '/products/': typeof ProductsIndexRoute
   '/technology/': typeof TechnologyIndexRoute
+  '/admin/pages/$slug': typeof AdminPagesSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRouteWithChildren
+  '/admin-login': typeof AdminLoginRoute
   '/contact': typeof ContactRoute
   '/custom-development': typeof CustomDevelopmentRoute
   '/facility': typeof FacilityRoute
@@ -164,13 +193,17 @@ export interface FileRoutesByTo {
   '/insights/$slug': typeof InsightsSlugRoute
   '/products/$slug': typeof ProductsSlugRoute
   '/technology/$slug': typeof TechnologySlugRoute
+  '/admin': typeof AdminIndexRoute
   '/products': typeof ProductsIndexRoute
   '/technology': typeof TechnologyIndexRoute
+  '/admin/pages/$slug': typeof AdminPagesSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
   '/about': typeof AboutRouteWithChildren
+  '/admin-login': typeof AdminLoginRoute
   '/contact': typeof ContactRoute
   '/custom-development': typeof CustomDevelopmentRoute
   '/facility': typeof FacilityRoute
@@ -186,14 +219,18 @@ export interface FileRoutesById {
   '/insights/$slug': typeof InsightsSlugRoute
   '/products/$slug': typeof ProductsSlugRoute
   '/technology/$slug': typeof TechnologySlugRoute
+  '/admin/': typeof AdminIndexRoute
   '/products/': typeof ProductsIndexRoute
   '/technology/': typeof TechnologyIndexRoute
+  '/admin/pages/$slug': typeof AdminPagesSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/about'
+    | '/admin-login'
     | '/contact'
     | '/custom-development'
     | '/facility'
@@ -209,12 +246,15 @@ export interface FileRouteTypes {
     | '/insights/$slug'
     | '/products/$slug'
     | '/technology/$slug'
+    | '/admin/'
     | '/products/'
     | '/technology/'
+    | '/admin/pages/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
+    | '/admin-login'
     | '/contact'
     | '/custom-development'
     | '/facility'
@@ -230,12 +270,16 @@ export interface FileRouteTypes {
     | '/insights/$slug'
     | '/products/$slug'
     | '/technology/$slug'
+    | '/admin'
     | '/products'
     | '/technology'
+    | '/admin/pages/$slug'
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/about'
+    | '/admin-login'
     | '/contact'
     | '/custom-development'
     | '/facility'
@@ -251,13 +295,17 @@ export interface FileRouteTypes {
     | '/insights/$slug'
     | '/products/$slug'
     | '/technology/$slug'
+    | '/admin/'
     | '/products/'
     | '/technology/'
+    | '/admin/pages/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRouteRoute: typeof AdminRouteRouteWithChildren
   AboutRoute: typeof AboutRouteWithChildren
+  AdminLoginRoute: typeof AdminLoginRoute
   ContactRoute: typeof ContactRoute
   CustomDevelopmentRoute: typeof CustomDevelopmentRoute
   FacilityRoute: typeof FacilityRoute
@@ -288,6 +336,20 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin-login': {
+      id: '/admin-login'
+      path: '/admin-login'
+      fullPath: '/admin-login'
+      preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -374,6 +436,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutNetworkRouteImport
       parentRoute: typeof AboutRoute
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/insights/$slug': {
       id: '/insights/$slug'
       path: '/$slug'
@@ -409,8 +478,29 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TechnologySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/pages/$slug': {
+      id: '/admin/pages/$slug'
+      path: '/pages/$slug'
+      fullPath: '/admin/pages/$slug'
+      preLoaderRoute: typeof AdminPagesSlugRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
   }
 }
+
+interface AdminRouteRouteChildren {
+  AdminIndexRoute: typeof AdminIndexRoute
+  AdminPagesSlugRoute: typeof AdminPagesSlugRoute
+}
+
+const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminIndexRoute: AdminIndexRoute,
+  AdminPagesSlugRoute: AdminPagesSlugRoute,
+}
+
+const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
+  AdminRouteRouteChildren,
+)
 
 interface AboutRouteChildren {
   AboutMissionRoute: typeof AboutMissionRoute
@@ -438,7 +528,9 @@ const InsightsRouteWithChildren = InsightsRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRouteRoute: AdminRouteRouteWithChildren,
   AboutRoute: AboutRouteWithChildren,
+  AdminLoginRoute: AdminLoginRoute,
   ContactRoute: ContactRoute,
   CustomDevelopmentRoute: CustomDevelopmentRoute,
   FacilityRoute: FacilityRoute,

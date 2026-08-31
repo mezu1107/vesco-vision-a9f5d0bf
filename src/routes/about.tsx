@@ -1,308 +1,183 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { PageHero, Section, SectionHeading, Reveal, TealButton } from "@/components/site/primitives";
+import { createFileRoute } from "@tanstack/react-router";
+import { getPageData } from "@/lib/page-api";
+
+import { Eyebrow, Reveal, Section, SectionHeading, TealButton } from "@/components/site/primitives";
 import { CTABand } from "@/components/site/CTABand";
-import { useI18n } from "@/lib/i18n";
-import cleanroom from "@/assets/cleanroom.jpg";
-import koreanLabTeam from "@/assets/korean-lab-team.jpg";
-import seoulCampus from "@/assets/seoul-biotech-campus.jpg";
-import koreanScientist from "@/assets/korean-scientist-vials.jpg";
 
 export const Route = createFileRoute("/about")({
-  head: () => ({
-    meta: [
-      { title: "About Vesco Science — Korean Regenerative Biotechnology" },
-      {
-        name: "description",
-        content:
-          "Vesco Science is a Korea-based biotechnology company uniting exosome R&D, regenerative formulation, manufacturing and quality control under one operation in Seoul.",
-      },
-      { property: "og:title", content: "About Vesco Science — Korean Regenerative Biotechnology" },
-      {
-        property: "og:description",
-        content:
-          "Research, formulation, manufacturing and quality control handled as one connected operation in Korea.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: Page,
+   loader: () => getPageData({ data: "about" }),
+   component: AboutPage,
 });
 
-type Block = { title: string; body: string };
-type Milestone = { year: string; text: string };
-type StorySection = {
-  eyebrow: string;
-  title: string;
-  body1: string;
-  body2: string;
-  imageAlt: string;
-};
-type ValuesSection = { eyebrow: string; title: string; items: Block[] };
-type MilestonesSection = { eyebrow: string; title: string; items: Milestone[] };
-type LocationSection = {
-  eyebrow: string;
-  title: string;
-  body: string;
-  points: string[];
-  imageAlt: string;
-};
-type PeopleSection = { eyebrow: string; title: string; body: string; cta: string; imageAlt: string };
+function AboutPage() {
+   const data: any = Route.useLoaderData();
 
-function Page() {
-  const { t, tx } = useI18n();
-  const blocks = tx<Block[]>("pages.about.blocks") ?? [];
-  const points = tx<string[]>("intro.points") ?? [];
-  const story = tx<StorySection>("pages.about.story");
-  const values = tx<ValuesSection>("pages.about.values");
-  const milestones = tx<MilestonesSection>("pages.about.milestones");
-  const location = tx<LocationSection>("pages.about.location");
-  const people = tx<PeopleSection>("pages.about.people");
-
-  return (
-    <>
-      <PageHero
-        eyebrow={t("pages.about.eyebrow")}
-        title={t("pages.about.title")}
-        lead={t("pages.about.lead")}
-        image={cleanroom}
-        imageAlt={t("intro.imageAlt")}
-        crumb={{ label: t("nav.about"), homeLabel: t("common.breadcrumbHome") }}
-      />
-
-      {/* ---------- COMPANY OVERVIEW ---------- */}
-      <Section>
-        <div className="grid gap-14 lg:grid-cols-[1.15fr_1fr]">
-          <div>
-            <SectionHeading
-              eyebrow={t("intro.eyebrow")}
-              title={t("intro.title")}
-              intro={t("intro.body1")}
+   return (
+      <>
+         {/* HERO */}
+         <section className="relative isolate flex min-h-[70vh] items-center overflow-hidden bg-navy-deep">
+            <img
+               src={data.hero.image}
+               alt="About Hero"
+               className="absolute inset-0 h-full w-full object-cover opacity-30"
             />
-            <p className="mt-6 max-w-3xl text-[1.0625rem] leading-relaxed text-muted-foreground">
-              {t("intro.body2")}
-            </p>
-          </div>
-          <Reveal>
-            <ul className="grid gap-px bg-hairline">
-              {points.map((p) => (
-                <li key={p} className="bg-card px-6 py-4 text-[0.95rem] text-navy">
-                  <span className="mr-3 inline-block h-1.5 w-1.5 translate-y-[-2px] bg-teal align-middle" />
-                  {p}
-                </li>
-              ))}
-            </ul>
-          </Reveal>
-        </div>
-      </Section>
-
-      {/* ---------- OUR STORY ---------- */}
-      {story ? (
-        <Section tone="white">
-          <div className="grid gap-14 lg:grid-cols-2 lg:items-center">
-            <Reveal>
-              <div className="relative">
-                <img
-                  src={koreanLabTeam}
-                  alt={story.imageAlt}
-                  loading="lazy"
-                  width={1280}
-                  height={960}
-                  className="aspect-[4/3] w-full object-cover"
-                />
-                <div className="absolute -bottom-5 -right-5 hidden border border-hairline bg-card px-6 py-5 md:block">
-                  <p className="eyebrow">{t("meta.company")}</p>
-                  <p className="mt-2 text-[0.9rem] text-navy">{t("meta.tagline")}</p>
-                </div>
-              </div>
-            </Reveal>
-            <Reveal delay={120}>
-              <div>
-                <SectionHeading eyebrow={story.eyebrow} title={story.title} />
-                <p className="mt-6 text-[1rem] leading-relaxed text-muted-foreground">
-                  {story.body1}
-                </p>
-                <p className="mt-4 text-[1rem] leading-relaxed text-muted-foreground">
-                  {story.body2}
-                </p>
-              </div>
-            </Reveal>
-          </div>
-        </Section>
-      ) : null}
-
-      {/* ---------- VALUES ---------- */}
-      {values ? (
-        <Section tone="muted">
-          <Reveal>
-            <SectionHeading eyebrow={values.eyebrow} title={values.title} />
-          </Reveal>
-          <div className="mt-14 grid gap-px bg-hairline sm:grid-cols-2 lg:grid-cols-4">
-            {values.items.map((v, i) => (
-              <Reveal key={v.title} delay={i * 70}>
-                <article className="h-full bg-card p-8">
-                  <span className="font-display text-[0.72rem] font-bold tracking-[0.18em] text-teal">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <h3 className="mt-5 text-[1.05rem] font-semibold text-navy">{v.title}</h3>
-                  <p className="mt-3 text-[0.92rem] leading-relaxed text-muted-foreground">
-                    {v.body}
+            <div className="absolute inset-0 bg-gradient-to-r from-navy-deep via-navy-deep/85 to-navy/40" />
+            <div className="relative mx-auto w-full max-w-[1240px] px-6 py-24 md:px-10">
+               <Reveal>
+                  <h1 className="max-w-4xl text-[clamp(2.4rem,5vw,4rem)] leading-[1.05] font-semibold text-white">
+                     {data.hero.heading}
+                  </h1>
+               </Reveal>
+               <Reveal delay={100}>
+                  <p className="mt-8 max-w-3xl text-[1.0625rem] leading-relaxed text-white/80 whitespace-pre-wrap">
+                     {data.hero.copy}
                   </p>
-                </article>
-              </Reveal>
-            ))}
-          </div>
-        </Section>
-      ) : null}
+               </Reveal>
+               <Reveal delay={200}>
+                  <div className="mt-10 flex flex-wrap gap-4">
+                     <TealButton to="/technology">{data.hero.buttons[0]}</TealButton>
+                     <TealButton to="/oem" variant="ghost">{data.hero.buttons[1]}</TealButton>
+                  </div>
+               </Reveal>
+            </div>
+         </section>
 
-      {/* ---------- MILESTONES ---------- */}
-      {milestones ? (
-        <section className="relative isolate overflow-hidden bg-navy">
-          <div className="absolute inset-0 navy-grid opacity-30" />
-          <div className="relative mx-auto w-full max-w-[1240px] px-6 py-20 md:px-10 md:py-28">
+         {/* WHO WE ARE */}
+         <Section tone="white">
             <Reveal>
-              <SectionHeading eyebrow={milestones.eyebrow} title={milestones.title} invert />
+               <SectionHeading eyebrow={data.whoWeAre.heading} title={data.whoWeAre.subheading} />
+               <p className="mt-6 text-[1.1rem] leading-relaxed text-muted-foreground max-w-4xl">
+                  {data.whoWeAre.copy}
+               </p>
             </Reveal>
-            <ol className="mt-14 grid gap-px bg-white/10 sm:grid-cols-2 lg:grid-cols-7">
-              {milestones.items.map((m, i) => (
-                <Reveal key={m.year} delay={i * 60}>
-                  <li className="h-full bg-navy-deep/60 p-6">
-                    <span className="font-display text-[1.15rem] font-bold tracking-[0.08em] text-teal">
-                      {m.year}
-                    </span>
-                    <p className="mt-4 text-[0.86rem] leading-relaxed text-white/75">{m.text}</p>
-                  </li>
-                </Reveal>
-              ))}
-            </ol>
-          </div>
-        </section>
-      ) : null}
+            <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+               {data.whoWeAre.capabilities.map((cap: any, i: number) => (
+                  <Reveal key={i} delay={i * 80}>
+                     <div className="bg-background p-8 outline outline-hairline h-full shadow-sm hover:shadow-md transition">
+                        <h3 className="text-[1.1rem] font-semibold text-navy mb-3">{cap.title}</h3>
+                        <p className="text-muted-foreground text-[0.95rem] leading-relaxed">{cap.desc}</p>
+                     </div>
+                  </Reveal>
+               ))}
+            </div>
+         </Section>
 
-      {/* ---------- POSITION / FOCUS / PARTNERS ---------- */}
-      <Section tone="white">
-        <div className="grid gap-8 md:grid-cols-3">
-          {blocks.map((b, i) => (
-            <Reveal key={b.title} delay={i * 80}>
-              <article className="card-flat h-full p-8">
-                <h3 className="text-[1.15rem] font-semibold text-navy">{b.title}</h3>
-                <p className="mt-4 text-[0.95rem] leading-relaxed text-muted-foreground">
-                  {b.body}
-                </p>
-              </article>
-            </Reveal>
-          ))}
-        </div>
-      </Section>
+         {/* SCIENTIFIC APPROACH & MANUFACTURING */}
+         <Section className="bg-slate-50">
+            <div className="grid gap-14 lg:grid-cols-[1.1fr_1fr] items-start">
+               <Reveal>
+                  <img src={data.scientificApproach.image} className="w-full h-auto aspect-video object-cover" alt="Scientific Approach" />
+               </Reveal>
+               <div>
+                  <Reveal>
+                     <SectionHeading eyebrow={data.scientificApproach.heading} title={data.scientificApproach.subheading} />
+                     <p className="mt-6 text-[1.05rem] leading-relaxed text-muted-foreground whitespace-pre-wrap">
+                        {data.scientificApproach.copy}
+                     </p>
+                  </Reveal>
 
-      {/* ---------- SEOUL HEADQUARTERS ---------- */}
-      {location ? (
-        <Section>
-          <div className="grid gap-14 lg:grid-cols-[1.1fr_1fr] lg:items-center">
+                  <Reveal delay={100}>
+                     <div className="mt-14">
+                        <SectionHeading eyebrow={data.manufacturing.heading} title={data.manufacturing.subheading} />
+                        <p className="mt-6 text-[1.05rem] leading-relaxed text-muted-foreground whitespace-pre-wrap">
+                           {data.manufacturing.copy}
+                        </p>
+
+                        <div className="mt-8 flex flex-col items-start gap-2">
+                           {data.manufacturing.flow.map((flow: string, i: number) => (
+                              <div key={i} className="flex items-center">
+                                 <div className="bg-teal text-white px-4 py-2 font-semibold text-sm rounded-sm">
+                                    {flow}
+                                 </div>
+                                 {i < data.manufacturing.flow.length - 1 && <span className="text-teal ml-4">↓</span>}
+                              </div>
+                           ))}
+                        </div>
+                        <p className="mt-8 text-[0.95rem] leading-relaxed text-muted-foreground italic">
+                           {data.manufacturing.footer}
+                        </p>
+                     </div>
+                  </Reveal>
+               </div>
+            </div>
+         </Section>
+
+         {/* QUALITY */}
+         <Section tone="white">
             <Reveal>
-              <div>
-                <SectionHeading eyebrow={location.eyebrow} title={location.title} />
-                <p className="mt-6 text-[1rem] leading-relaxed text-muted-foreground">
-                  {location.body}
-                </p>
-                <ul className="mt-8 flex flex-wrap gap-2">
-                  {location.points.map((p) => (
-                    <li
-                      key={p}
-                      className="border border-hairline bg-card px-3.5 py-2 text-[0.78rem] font-medium text-navy"
-                    >
-                      {p}
-                    </li>
-                  ))}
-                </ul>
-                <div className="mt-10">
-                  <TealButton to="/facility" variant="outline">
-                    {t("facility.title")}
-                  </TealButton>
-                </div>
-              </div>
+               <SectionHeading eyebrow={data.quality.heading} title={data.quality.subheading} />
+               <p className="mt-6 text-[1.05rem] leading-relaxed text-muted-foreground max-w-4xl whitespace-pre-wrap">
+                  {data.quality.copy}
+               </p>
+            </Reveal>
+            <div className="mt-14 grid gap-px bg-hairline sm:grid-cols-2 lg:grid-cols-3">
+               {data.quality.points.map((pt: any, idx: number) => (
+                  <Reveal key={idx} delay={idx * 60}>
+                     <div className="h-full bg-background p-8">
+                        <span className="font-display text-[0.8rem] font-bold tracking-[0.15em] text-teal block mb-4">
+                           {pt.num}
+                        </span>
+                        <h3 className="text-[1.1rem] font-semibold text-navy mb-3">{pt.title}</h3>
+                        <p className="text-muted-foreground text-[0.95rem] leading-relaxed">{pt.desc}</p>
+                     </div>
+                  </Reveal>
+               ))}
+            </div>
+         </Section>
+
+         {/* GLOBAL PARTNERSHIP */}
+         <Section className="bg-navy text-white">
+            <Reveal>
+               <SectionHeading eyebrow={data.partnership.heading} title={data.partnership.subheading} invert />
+               <h3 className="mt-8 text-2xl font-semibold text-teal">{data.partnership.title}</h3>
+               <p className="mt-6 text-[1.05rem] leading-relaxed text-white/80 max-w-4xl">
+                  {data.partnership.copy}
+               </p>
             </Reveal>
             <Reveal delay={120}>
-              <img
-                src={seoulCampus}
-                alt={location.imageAlt}
-                loading="lazy"
-                width={1280}
-                height={960}
-                className="aspect-[4/3] w-full object-cover"
-              />
+               <div className="mt-12 bg-white/5 border border-white/10 p-10 flex flex-col md:flex-row items-center justify-between text-center md:text-left gap-8">
+                  <div className="whitespace-pre-wrap font-semibold text-lg">{data.partnership.diagram.left}</div>
+                  <div className="text-3xl text-teal">×</div>
+                  <div className="whitespace-pre-wrap font-semibold text-lg text-right">{data.partnership.diagram.right}</div>
+               </div>
+               <div className="mt-10 bg-teal text-white p-6 text-center whitespace-pre-wrap font-semibold">
+                  {data.partnership.platforms}
+               </div>
             </Reveal>
-          </div>
-        </Section>
-      ) : null}
+         </Section>
 
-      {/* ---------- OUR PEOPLE ---------- */}
-      {people ? (
-        <Section tone="white">
-          <div className="grid gap-14 lg:grid-cols-2 lg:items-center">
+         {/* VISION & MISSION */}
+         <Section tone="white">
+            <div className="grid md:grid-cols-2 gap-14">
+               <Reveal>
+                  <SectionHeading eyebrow={data.visionMission.vision.heading} title={data.visionMission.vision.title} />
+                  <p className="mt-6 text-[1.05rem] leading-relaxed text-muted-foreground whitespace-pre-wrap">
+                     {data.visionMission.vision.copy}
+                  </p>
+               </Reveal>
+               <Reveal delay={100}>
+                  <SectionHeading eyebrow={data.visionMission.mission.heading} title={data.visionMission.mission.title} />
+                  <p className="mt-6 text-[1.05rem] leading-relaxed text-muted-foreground whitespace-pre-wrap">
+                     {data.visionMission.mission.copy}
+                  </p>
+               </Reveal>
+            </div>
+         </Section>
+
+         {/* FINAL CTA */}
+         <section className="bg-teal text-white py-24 px-6 text-center">
             <Reveal>
-              <img
-                src={koreanScientist}
-                alt={people.imageAlt}
-                loading="lazy"
-                width={1280}
-                height={960}
-                className="aspect-[4/3] w-full object-cover"
-              />
-            </Reveal>
-            <Reveal delay={120}>
-              <div>
-                <SectionHeading eyebrow={people.eyebrow} title={people.title} />
-                <p className="mt-6 text-[1rem] leading-relaxed text-muted-foreground">
-                  {people.body}
-                </p>
-                <div className="mt-10">
-                  <TealButton to="/research" variant="outline">
-                    {people.cta}
+               <div className="max-w-[800px] mx-auto">
+                  <h3 className="eyebrow !text-white/80 mb-4">{data.finalCta.heading}</h3>
+                  <h2 className="text-3xl md:text-5xl font-semibold mb-6">{data.finalCta.title}</h2>
+                  <p className="text-lg md:text-xl text-white/90 mb-10">{data.finalCta.copy}</p>
+                  <TealButton to="/contact" className="!bg-navy !text-white hover:!bg-navy-deep px-8 py-4 text-lg">
+                     {data.finalCta.buttonText}
                   </TealButton>
-                </div>
-              </div>
+               </div>
             </Reveal>
-          </div>
-        </Section>
-      ) : null}
+         </section>
 
-      {/* ---------- EXPLORE FURTHER ---------- */}
-      <Section tone="muted">
-        <SectionHeading
-          eyebrow={t("research.eyebrow")}
-          title={t("research.title")}
-          intro={t("research.intro")}
-        />
-        <div className="mt-10 flex flex-wrap gap-3">
-          <Link
-            to="/research"
-            className="rounded-sm border border-navy/20 px-6 py-3 text-[0.78rem] font-semibold tracking-[0.12em] uppercase text-navy transition-colors hover:border-teal hover:text-science"
-          >
-            {t("research.title")}
-          </Link>
-          <Link
-            to="/about/mission"
-            className="rounded-sm border border-navy/20 px-6 py-3 text-[0.78rem] font-semibold tracking-[0.12em] uppercase text-navy transition-colors hover:border-teal hover:text-science"
-          >
-            {t("nav.about")}
-          </Link>
-          <Link
-            to="/facility"
-            className="rounded-sm border border-navy/20 px-6 py-3 text-[0.78rem] font-semibold tracking-[0.12em] uppercase text-navy transition-colors hover:border-teal hover:text-science"
-          >
-            {t("facility.title")}
-          </Link>
-          <Link
-            to="/about/network"
-            className="rounded-sm border border-navy/20 px-6 py-3 text-[0.78rem] font-semibold tracking-[0.12em] uppercase text-navy transition-colors hover:border-teal hover:text-science"
-          >
-            {t("partnership.eyebrow")}
-          </Link>
-        </div>
-      </Section>
-
-      <CTABand />
-    </>
-  );
+      </>
+   );
 }

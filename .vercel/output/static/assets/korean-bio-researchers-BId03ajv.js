@@ -1,0 +1,1 @@
+var e=`/assets/korean-bio-researchers-BF6ehCrh.jpg`;export{e as t};

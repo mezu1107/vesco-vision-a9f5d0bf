@@ -254,26 +254,42 @@ export function TealButton({
   params,
   children,
   variant = "solid",
+  className = "",
+  onClick,
+  disabled
 }: {
-  to: string;
+  to?: string;
   params?: Record<string, string>;
   children: ReactNode;
   variant?: "solid" | "ghost" | "outline";
+  className?: string;
+  onClick?: () => void;
+  disabled?: boolean;
 }) {
   const styles = {
     solid: "bg-teal text-[#05231f] hover:bg-teal/85",
     outline: "border border-navy/25 text-navy hover:border-teal hover:text-science",
     ghost: "border border-white/25 text-white hover:border-teal hover:text-teal",
   }[variant];
+  const comb = `inline-flex justify-center items-center gap-3 rounded-sm px-7 py-3.5 text-[0.8rem] font-semibold tracking-[0.14em] uppercase transition-all duration-300 ${styles} ${className} ${disabled ? "opacity-50 cursor-not-allowed" : ""}`;
+  
+  if (to) {
+    return (
+      <Link
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        to={to as any}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        params={params as any}
+        className={comb}
+      >
+        {children}
+      </Link>
+    );
+  }
+  
   return (
-    <Link
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      to={to as any}
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      params={params as any}
-      className={`inline-flex items-center gap-3 rounded-sm px-7 py-3.5 text-[0.8rem] font-semibold tracking-[0.14em] uppercase transition-all duration-300 ${styles}`}
-    >
+    <button onClick={onClick} disabled={disabled} className={comb}>
       {children}
-    </Link>
+    </button>
   );
 }
