@@ -1,12 +1,11 @@
 import { r as __toESM } from "../_runtime.mjs";
 import { n as require_jsx_runtime, r as require_react } from "../_libs/react+tanstack__react-query.mjs";
 import { g as Link } from "../_libs/@tanstack/react-router+[...].mjs";
-import { d as useI18n } from "./router-RzC8V2F6.mjs";
+import { S as useI18n } from "./router-CozBOSu6.mjs";
 import { a as Section, i as Reveal, n as PageHero, o as SectionHeading, r as ProcessFlow } from "./primitives-DtnWq5Ev.mjs";
 import { t as CTABand } from "./CTABand-dxSsQYdq.mjs";
-import { t as korean_bio_researchers_default } from "./korean-bio-researchers-Dx5OjY4S.mjs";
+import { n as korean_bio_researchers_default, t as korean_cleanroom_facility_default } from "./korean-cleanroom-facility-DO9vYScX.mjs";
 import { t as lyophilizer_default } from "./lyophilizer-Q9Swj7Dp.mjs";
-import { t as korean_cleanroom_facility_default } from "./korean-cleanroom-facility-DO9vYScX.mjs";
 //#region node_modules/.nitro/vite/services/ssr/assets/custom-development-Ct3L-DMF.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();

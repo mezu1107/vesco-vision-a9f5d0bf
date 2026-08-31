@@ -1,1 +1,0 @@
-var e=`/assets/seoul-biotech-campus-D3ksiCpk.jpg`;export{e as t};

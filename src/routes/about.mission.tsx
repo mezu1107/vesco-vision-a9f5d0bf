@@ -143,95 +143,53 @@ function Page() {
           ))}
         </div>
       </Section>
-
-      {/* ---------- KOREAN CELLULAR RESEARCH EXCELLENCE (IMAGE 2) ---------- */}
-      <Section tone="white">
-        <div className="grid gap-14 lg:grid-cols-2 lg:items-center">
-          <Reveal>
-            <div className="relative">
-              <img
-                src={researchSection.image ?? koreanBioResearchers}
-                alt="Korean biotechnology researchers"
-                loading="lazy"
-                width={1280}
-                height={960}
-                className="aspect-[4/3] w-full object-cover"
-              />
-              <div className="absolute -bottom-5 -right-5 hidden border border-hairline bg-card px-6 py-5 md:block">
-                <p className="eyebrow">R&D Scientific Precision</p>
-                <p className="mt-2 text-[0.9rem] text-navy">Cellular Characterization & Nanovesicle Lab</p>
-              </div>
-            </div>
-          </Reveal>
-          <Reveal delay={120}>
-            <div>
-              <SectionHeading
-                eyebrow={researchSection.eyebrow ?? "Scientific Rigor"}
-                title={researchSection.title ?? "Pioneering Korean Cellular & Exosome Research"}
-              />
-              {researchSection.body1 && <p className="mt-6 text-[1rem] leading-relaxed text-muted-foreground">{researchSection.body1}</p>}
-              {researchSection.body2 && <p className="mt-4 text-[1rem] leading-relaxed text-muted-foreground">{researchSection.body2}</p>}
-              {!researchSection.body1 && (
-            </div>
-          </Reveal>
+{/* ---------- KOREAN CELLULAR RESEARCH EXCELLENCE (IMAGE 2) ---------- */}
+<Section tone="white">
+  <div className="grid gap-14 lg:grid-cols-2 lg:items-center">
+    <Reveal>
+      <div className="relative">
+        <img
+          src={researchSection.image ?? koreanBioResearchers}
+          alt="Korean biotechnology researchers"
+          loading="lazy"
+          width={1280}
+          height={960}
+          className="aspect-[4/3] w-full object-cover"
+        />
+        <div className="absolute -bottom-5 -right-5 hidden border border-hairline bg-card px-6 py-5 md:block">
+          <p className="eyebrow">R&D Scientific Precision</p>
+          <p className="mt-2 text-[0.9rem] text-navy">
+            Cellular Characterization & Nanovesicle Lab
+          </p>
         </div>
-      </Section>
+      </div>
+    </Reveal>
 
-      {/* ---------- OPERATING PRINCIPLES ---------- */}
-      <Section tone="white">
-        <SectionHeading eyebrow={c.valuesEyebrow} title={c.valuesTitle} />
-        <div className="mt-12 grid gap-px bg-hairline sm:grid-cols-2 lg:grid-cols-3">
-          {c.values.map((v, i) => (
-            <Reveal key={v.title} delay={i * 50}>
-              <article className="h-full bg-card p-8">
-                <span className="font-display text-[0.72rem] font-bold tracking-[0.18em] text-teal">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <h3 className="mt-5 text-[1.08rem] font-semibold text-navy">{v.title}</h3>
-                <p className="mt-3 text-[0.93rem] leading-relaxed text-muted-foreground">
-                  {v.body}
-                </p>
-              </article>
-            </Reveal>
-          ))}
-        </div>
-      </Section>
+    <Reveal delay={120}>
+      <div>
+        <SectionHeading
+          eyebrow={researchSection.eyebrow ?? "Scientific Rigor"}
+          title={
+            researchSection.title ??
+            "Pioneering Korean Cellular & Exosome Research"
+          }
+        />
 
-      {/* ---------- KOREAN BIOTECH HUB & CAMPUS (IMAGE 3) ---------- */}
-      <Section tone="white">
-        <div className="grid gap-14 lg:grid-cols-2 lg:items-center">
-          <Reveal delay={120}>
-            <div>
-              <SectionHeading
-                eyebrow="Biotech Infrastructure"
-                title="Located in Korea's Premier Biotechnology Innovation Hub"
-              />
-              <p className="mt-6 text-[1rem] leading-relaxed text-muted-foreground">
-                Headquartered within the vibrant biotechnology ecosystem of Seoul and Pangyo Techno Valley, Vesco Science operates at the intersection of academic research, clinical aesthetics, and advanced biomanufacturing.
-              </p>
-              <p className="mt-4 text-[1rem] leading-relaxed text-muted-foreground">
-                This strategic location provides our team with direct access to top-tier Korean scientific talent, specialized analytical institutions, and rapid international air logistics for seamless global distribution.
-              </p>
-            </div>
-          </Reveal>
-          <Reveal>
-            <div className="relative">
-              <img
-                src={koreanSeoulCampus}
-                alt="Modern biotechnology research institute building in Pangyo Techno Valley, Seoul"
-                loading="lazy"
-                width={1280}
-                height={960}
-                className="aspect-[4/3] w-full object-cover"
-              />
-              <div className="absolute -bottom-5 -right-5 hidden border border-hairline bg-card px-6 py-5 md:block">
-                <p className="eyebrow">Innovation Campus</p>
-                <p className="mt-2 text-[0.9rem] text-navy">Pangyo Biotech Center, Greater Seoul</p>
-              </div>
-            </div>
-          </Reveal>
-        </div>
-      </Section>
+        {researchSection.body1 && (
+          <p className="mt-6 text-[1rem] leading-relaxed text-muted-foreground">
+            {researchSection.body1}
+          </p>
+        )}
+
+        {researchSection.body2 && (
+          <p className="mt-4 text-[1rem] leading-relaxed text-muted-foreground">
+            {researchSection.body2}
+          </p>
+        )}
+      </div>
+    </Reveal>
+  </div>
+</Section>
 
       <CTABand />
     </>

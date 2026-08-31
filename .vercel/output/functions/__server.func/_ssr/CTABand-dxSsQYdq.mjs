@@ -1,5 +1,5 @@
 import { n as require_jsx_runtime } from "../_libs/react+tanstack__react-query.mjs";
-import { d as useI18n } from "./router-RzC8V2F6.mjs";
+import { S as useI18n } from "./router-CozBOSu6.mjs";
 import { i as Reveal, s as TealButton } from "./primitives-DtnWq5Ev.mjs";
 //#region node_modules/.nitro/vite/services/ssr/assets/CTABand-dxSsQYdq.js
 var import_jsx_runtime = require_jsx_runtime();

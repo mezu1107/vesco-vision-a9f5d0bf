@@ -1,0 +1,1 @@
+var e=`pgbuilder_auth`;function t(t,n){return t===`admin@am.com`&&n===`Mezu@1105`&&(typeof window<`u`&&localStorage.setItem(e,`1`),!0)}function n(){typeof window<`u`&&localStorage.removeItem(e)}function r(){return typeof window>`u`?!1:localStorage.getItem(e)===`1`}export{t as n,n as r,r as t};
