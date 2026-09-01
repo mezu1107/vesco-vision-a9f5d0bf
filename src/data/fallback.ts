@@ -1,29 +1,15 @@
-// ── Default page content ────────────────────────────────────────────────────
-// Image URLs point to the Supabase public storage bucket.
-// Run supabase_setup.sql first, then upload the default images via the admin
-// panel or directly in Supabase Storage → "images" bucket.
-//
-// If Supabase is not configured yet, images fall back gracefully to empty
-// (the <img> tag just shows nothing until you upload via the admin panel).
-//
-// HOW IMAGE URLS WORK:
-//   https://<your-project>.supabase.co/storage/v1/object/public/images/<filename>
-//
-// The VITE_SUPABASE_URL env var is read at build time by vite.config.ts and
-// injected into import.meta.env so it works in both SSR and client bundles.
+// ── Default page content ─────────────────────────────────────────────────────
+// Images are served from Supabase Storage (public bucket "images").
+// VITE_SUPABASE_URL is injected by Vite at build time into import.meta.env —
+// this works in both client and SSR (Nitro/Vercel) bundles automatically.
+// No typeof guards needed — import.meta.env is always available in Vite builds.
 // ─────────────────────────────────────────────────────────────────────────────
 
-// Build the Supabase storage base URL at module load time.
-// Falls back to "" so img src="" shows nothing (not a broken path).
-const S = typeof import.meta !== "undefined"
-  ? ((import.meta as any).env?.VITE_SUPABASE_URL ?? "")
-  : "";
+const _base: string = import.meta.env.VITE_SUPABASE_URL ?? "";
 
-// Helper: returns the full public URL for a file in the "images" bucket,
-// or empty string if Supabase is not configured yet.
 function img(filename: string): string {
-  if (!S || S === "https://placeholder-url.supabase.co") return "";
-  return `${S}/storage/v1/object/public/images/${filename}`;
+  if (!_base || _base === "https://placeholder-url.supabase.co") return "";
+  return `${_base}/storage/v1/object/public/images/${filename}`;
 }
 
 export const defaultHomeData = {
@@ -52,10 +38,10 @@ export const defaultHomeData = {
     heading: "Technology at the Cellular Level",
     buttonText: "Explore All Technologies →",
     cards: [
-      { num: "01", title: "Exosome Technology",        body: "Extracellular vesicle development, purification, characterization and formulation." },
-      { num: "02", title: "PDRN / PN Technology",      body: "Advanced regenerative material platforms and formulation development." },
-      { num: "03", title: "Peptide Technology",         body: "Bioactive peptide and peptide-complex formulation capabilities." },
-      { num: "04", title: "HA & Regenerative Formulation", body: "Hyaluronic acid and advanced aesthetic/regenerative formulations." },
+      { num: "01", title: "Exosome Technology",             body: "Extracellular vesicle development, purification, characterization and formulation." },
+      { num: "02", title: "PDRN / PN Technology",           body: "Advanced regenerative material platforms and formulation development." },
+      { num: "03", title: "Peptide Technology",             body: "Bioactive peptide and peptide-complex formulation capabilities." },
+      { num: "04", title: "HA & Regenerative Formulation",  body: "Hyaluronic acid and advanced aesthetic/regenerative formulations." },
     ],
   },
   exosomeSection: {
@@ -96,11 +82,11 @@ export const defaultAboutData = {
     subheading: "Where Science Meets Scalable Manufacturing",
     copy: "At Vesco Science, we believe that meaningful innovation requires more than scientific discovery. It requires the ability to translate research into reproducible formulations, controlled manufacturing processes and consistently documented products.",
     capabilities: [
-      { title: "Research & Development",    desc: "Scientific exploration and product development." },
-      { title: "Advanced Biotechnology",    desc: "Platforms including exosome, PDRN/PN, peptide and regenerative technologies." },
-      { title: "Formulation Development",   desc: "Development and optimization of formulations according to product requirements." },
-      { title: "Manufacturing",             desc: "Controlled production, filling and packaging capabilities." },
-      { title: "Quality & Analysis",        desc: "Product-specific testing, documentation and quality control." },
+      { title: "Research & Development",   desc: "Scientific exploration and product development." },
+      { title: "Advanced Biotechnology",   desc: "Platforms including exosome, PDRN/PN, peptide and regenerative technologies." },
+      { title: "Formulation Development",  desc: "Development and optimization of formulations according to product requirements." },
+      { title: "Manufacturing",            desc: "Controlled production, filling and packaging capabilities." },
+      { title: "Quality & Analysis",       desc: "Product-specific testing, documentation and quality control." },
     ],
   },
   scientificApproach: {
@@ -121,12 +107,12 @@ export const defaultAboutData = {
     subheading: "Quality Built Into Every Stage",
     copy: "At Vesco Science, quality is integrated throughout the entire product lifecycle — from raw material selection and process development to manufacturing, testing, documentation, storage and distribution.\n\nOur quality approach is designed to support product consistency, process control, traceability and integrity while meeting the defined requirements of each product and market.",
     points: [
-      { num: "01", title: "Raw Material Control",     desc: "Raw materials are carefully evaluated against defined specifications before entering the manufacturing process. This helps ensure material consistency, suitability, and quality from the very beginning." },
-      { num: "02", title: "Process Control",           desc: "Manufacturing processes are performed under defined and monitored conditions. Controlled procedures help maintain consistency, reproducibility, and reliable production across batches." },
-      { num: "03", title: "Analytical Testing",        desc: "Product-specific analytical testing is used to evaluate key quality attributes and characteristics. Testing helps verify that products meet their defined specifications and quality requirements." },
-      { num: "04", title: "Microbiological Testing",   desc: "Relevant microbiological assessments are conducted according to product requirements and applicable standards. These controls help support product safety, quality, and microbiological integrity." },
-      { num: "05", title: "Batch Traceability",        desc: "Each batch is supported by documented manufacturing and quality information. This enables traceability from raw materials and production through testing, review, and final release." },
-      { num: "06", title: "Storage & Distribution",    desc: "Products are stored and transported according to their defined storage and handling requirements. Appropriate conditions help maintain product integrity and quality throughout the supply chain." },
+      { num: "01", title: "Raw Material Control",    desc: "Raw materials are carefully evaluated against defined specifications before entering the manufacturing process. This helps ensure material consistency, suitability, and quality from the very beginning." },
+      { num: "02", title: "Process Control",          desc: "Manufacturing processes are performed under defined and monitored conditions. Controlled procedures help maintain consistency, reproducibility, and reliable production across batches." },
+      { num: "03", title: "Analytical Testing",       desc: "Product-specific analytical testing is used to evaluate key quality attributes and characteristics. Testing helps verify that products meet their defined specifications and quality requirements." },
+      { num: "04", title: "Microbiological Testing",  desc: "Relevant microbiological assessments are conducted according to product requirements and applicable standards. These controls help support product safety, quality, and microbiological integrity." },
+      { num: "05", title: "Batch Traceability",       desc: "Each batch is supported by documented manufacturing and quality information. This enables traceability from raw materials and production through testing, review, and final release." },
+      { num: "06", title: "Storage & Distribution",   desc: "Products are stored and transported according to their defined storage and handling requirements. Appropriate conditions help maintain product integrity and quality throughout the supply chain." },
     ],
   },
   partnership: {

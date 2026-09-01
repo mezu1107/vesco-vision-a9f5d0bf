@@ -9,11 +9,8 @@
 
 // Build the Supabase Storage base URL at module load time.
 // import.meta.env.VITE_SUPABASE_URL is injected by Vite into both client and
-// SSR bundles (via vite.config.ts define).
-const _S: string =
-  typeof import.meta !== "undefined"
-    ? ((import.meta as any).env?.VITE_SUPABASE_URL ?? "")
-    : "";
+// SSR bundles automatically — no typeof guards needed.
+const _S: string = import.meta.env.VITE_SUPABASE_URL ?? "";
 
 // Returns a permanent Supabase public URL, or "" if not configured yet.
 function img(filename: string): string {
