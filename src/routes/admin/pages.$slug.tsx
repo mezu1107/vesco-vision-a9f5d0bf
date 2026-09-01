@@ -6,7 +6,7 @@ import {
   Loader2, Layers, ChevronDown, ChevronUp,
   Star, Zap, Award, Settings2, Type, Info, Home, Building2,
   ShieldCheck, FlaskConical, Phone, HelpCircle, FolderOpen,
-  Cpu, Package, Newspaper, Globe, List, ImageIcon, Users,
+  Cpu, Package, Newspaper, Globe, List, Users,
 } from "lucide-react";
 
 // ── Home / About editors (existing) ──────────────────────────────────────────

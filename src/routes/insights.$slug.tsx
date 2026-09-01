@@ -2,22 +2,32 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { PageHero, Section, Reveal, TealButton, SectionHeading } from "@/components/site/primitives";
 import { CTABand } from "@/components/site/CTABand";
 import { useI18n } from "@/lib/i18n";
-import { ARTICLES, getArticle } from "@/data/articles";
+import { ARTICLES } from "@/data/articles";
+import { loadCmsPage } from "@/lib/cms-page";
 import seoulCampus from "@/assets/seoul-biotech-campus.jpg";
 import koreanCleanroom from "@/assets/korean-cleanroom-facility.jpg";
 import koreanScientists from "@/assets/korean-bio-researchers.jpg";
 
 export const Route = createFileRoute("/insights/$slug")({
-  loader: ({ params }) => {
-    const article = getArticle(params.slug);
+  loader: async ({ params }) => {
+    // Load CMS insights data to get any admin-added articles
+    const cmsData = await loadCmsPage("insights");
+    const cmsArticles: typeof ARTICLES = Array.isArray(cmsData?.articles) && cmsData.articles.length > 0
+      ? cmsData.articles
+      : [];
+
+    // Merge: CMS articles override static ones by slug; new CMS slugs are appended
+    const merged = mergeArticles(ARTICLES, cmsArticles);
+
+    // Find the article — CMS version first, then static fallback
+    const article = merged.find((a) => a.slug === params.slug);
     if (!article) throw notFound();
-    return { article };
+
+    return { article, cmsData };
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
-      return {
-        meta: [{ title: "Article not found — Vesco Science" }, { name: "robots", content: "noindex" }],
-      };
+      return { meta: [{ title: "Article not found — Vesco Science" }, { name: "robots", content: "noindex" }] };
     }
     const { title, excerpt } = loaderData.article;
     return {
@@ -50,13 +60,48 @@ export const Route = createFileRoute("/insights/$slug")({
 
 type ArticleSection = { title: string; body: string };
 
+/**
+ * Merge static articles with CMS articles.
+ * - CMS article with matching slug overrides the static one.
+ * - CMS articles with new slugs are appended.
+ */
+function mergeArticles(
+  staticArticles: typeof ARTICLES,
+  cmsArticles: typeof ARTICLES,
+): typeof ARTICLES {
+  if (!cmsArticles.length) return staticArticles;
+
+  const result = [...staticArticles];
+  for (const cmsArt of cmsArticles) {
+    if (!cmsArt.slug) continue; // skip malformed entries
+    const idx = result.findIndex((a) => a.slug === cmsArt.slug);
+    if (idx >= 0) {
+      // Override existing static article with CMS version
+      result[idx] = cmsArt;
+    } else {
+      // New article added via admin
+      result.push(cmsArt);
+    }
+  }
+  return result;
+}
+
 function Page() {
-  const { article } = Route.useLoaderData();
+  const { article, cmsData } = Route.useLoaderData();
   const { t, tx } = useI18n();
+
+  // Body sections — i18n-driven (same 3 sections for all articles, by design)
   const sections = tx<ArticleSection[]>("article.sections") ?? [];
-  const related = ARTICLES.filter(
-    (a) => a.category === article.category && a.slug !== article.slug,
-  ).slice(0, 4);
+
+  // Build full articles list for "related" sidebar (same merge logic)
+  const cmsArticles: typeof ARTICLES = Array.isArray(cmsData?.articles) && cmsData.articles.length > 0
+    ? cmsData.articles
+    : [];
+  const allArticles = mergeArticles(ARTICLES, cmsArticles);
+
+  const related = allArticles
+    .filter((a) => a.category === article.category && a.slug !== article.slug)
+    .slice(0, 4);
 
   return (
     <>
@@ -71,6 +116,7 @@ function Page() {
 
       <Section>
         <div className="grid gap-14 lg:grid-cols-[1.5fr_1fr]">
+          {/* ── Article body ─────────────────────────────────────── */}
           <article>
             <Link
               to="/insights"
@@ -79,22 +125,19 @@ function Page() {
               ← {t("article.back")}
             </Link>
 
+            {/* Sections */}
             <div className="mt-10 grid gap-10">
               {sections.map((s, i) => (
-                <Reveal key={s.title} delay={i * 60}>
+                <Reveal key={i} delay={i * 60}>
                   <section>
-                    <h2 className="text-[1.4rem] leading-snug font-semibold text-navy">
-                      {s.title}
-                    </h2>
-                    <p className="mt-4 text-[1rem] leading-relaxed text-muted-foreground">
-                      {s.body}
-                    </p>
+                    <h2 className="text-[1.4rem] leading-snug font-semibold text-navy">{s.title}</h2>
+                    <p className="mt-4 text-[1rem] leading-relaxed text-muted-foreground">{s.body}</p>
                   </section>
                 </Reveal>
               ))}
             </div>
 
-            {/* ---------- ARTICLE IMAGE 2: KOREAN CLEANROOM PROTOCOL ---------- */}
+            {/* Cleanroom image */}
             <div className="my-12">
               <Reveal>
                 <div className="relative">
@@ -102,18 +145,17 @@ function Page() {
                     src={koreanCleanroom}
                     alt="cGMP cleanroom suite for exosome processing and filling in Seoul"
                     loading="lazy"
-                    width={1280}
-                    height={960}
                     className="aspect-[16/9] w-full object-cover"
                   />
                   <p className="mt-3 text-[0.82rem] italic text-muted-foreground">
-                    Figure 1: cGMP cleanroom environmental monitoring and aseptic filling line at Vesco Science Korea.
+                    Figure 1: cGMP cleanroom environmental monitoring and aseptic filling line at
+                    Vesco Science Korea.
                   </p>
                 </div>
               </Reveal>
             </div>
 
-            {/* ---------- ARTICLE IMAGE 3: KOREAN R&D SCIENTISTS ---------- */}
+            {/* Scientists image */}
             <div className="my-12">
               <Reveal delay={100}>
                 <div className="relative">
@@ -121,12 +163,11 @@ function Page() {
                     src={koreanScientists}
                     alt="Korean R&D research scientists conducting bio-assay and analytical testing"
                     loading="lazy"
-                    width={1280}
-                    height={960}
                     className="aspect-[16/9] w-full object-cover"
                   />
                   <p className="mt-3 text-[0.82rem] italic text-muted-foreground">
-                    Figure 2: Biological assays and particle size distribution (NTA) testing by Seoul research staff.
+                    Figure 2: Biological assays and particle size distribution (NTA) testing by Seoul
+                    research staff.
                   </p>
                 </div>
               </Reveal>
@@ -141,6 +182,7 @@ function Page() {
             </div>
           </article>
 
+          {/* ── Related articles sidebar ──────────────────────── */}
           <Reveal>
             <aside className="card-flat sticky top-28 p-8">
               <h3 className="text-[0.72rem] font-semibold tracking-[0.14em] uppercase text-science">
@@ -156,9 +198,20 @@ function Page() {
                     >
                       {r.title}
                     </Link>
+                    <p className="mt-1 text-[0.8rem] text-muted-foreground line-clamp-2">
+                      {r.excerpt}
+                    </p>
                   </li>
                 ))}
               </ul>
+
+              {/* Category tag */}
+              <div className="mt-8 border-t border-hairline pt-6">
+                <span className="text-[0.7rem] font-semibold tracking-[0.14em] uppercase text-science">
+                  Category
+                </span>
+                <p className="mt-2 text-[0.9rem] font-medium text-navy">{article.category}</p>
+              </div>
             </aside>
           </Reveal>
         </div>
@@ -168,4 +221,3 @@ function Page() {
     </>
   );
 }
-

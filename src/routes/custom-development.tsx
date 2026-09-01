@@ -3,26 +3,20 @@ import { useState } from "react";
 import { PageHero, Section, SectionHeading, Reveal, ProcessFlow } from "@/components/site/primitives";
 import { CTABand } from "@/components/site/CTABand";
 import { useI18n } from "@/lib/i18n";
+import { loadCmsPage } from "@/lib/cms-page";
 import lyophilizer from "@/assets/lyophilizer.jpg";
 import koreanCleanroom from "@/assets/korean-cleanroom-facility.jpg";
 import koreanScientists from "@/assets/korean-bio-researchers.jpg";
 
 export const Route = createFileRoute("/custom-development")({
+  loader: () => loadCmsPage("custom-development"),
   head: () => ({
     meta: [
       { title: "Custom Development — Build Your Own Korean Regenerative Biological Product" },
       {
         name: "description",
         content:
-          "Define product category, active exosome/PDRN concentration, lyophilization dosage form, packaging, MOQ, and target market — start custom OEM/ODM development with Vesco Science Seoul.",
-      },
-      {
-        property: "og:title",
-        content: "Custom Development — Build Your Own Korean Regenerative Biological Product",
-      },
-      {
-        property: "og:description",
-        content: "Your custom specification, our formulation science and Korean cGMP manufacturing excellence.",
+          "Define product category, active concentration, dosage form, packaging and target market — start custom OEM/ODM development with Vesco Science Seoul.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -32,128 +26,82 @@ export const Route = createFileRoute("/custom-development")({
   component: Page,
 });
 
-const COPY = {
-  en: {
-    eyebrow: "OEM / ODM / Custom Development",
-    title: "Build Your Own Korean Regenerative Product",
-    lead: "Tell us the specification you need. Our Seoul-based formulation, analytical and cGMP production teams translate your requirements into a compliant, document-backed biological product.",
-    briefEyebrow: "Project Brief",
-    briefTitle: "Define Your Product Specification",
-    briefIntro:
-      "Submit your initial target parameters below. Every field provides our Korean formulation team with essential data to prepare a customized feasibility study and development roadmap.",
-    fields: [
-      { label: "Product Category", ph: "Exosome / PDRN / Skin Booster / Hair Scalp / Custom Biologic" },
-      { label: "Target Market", ph: "Destination country or regional distribution market" },
-      { label: "Active Ingredient", ph: "Stem cell exosome, PDRN/PN, growth factors, peptides" },
-      { label: "Desired Concentration", ph: "e.g. 5.0 x 10^10 particles/vial or mg/mL" },
-      { label: "Dosage Form", ph: "Lyophilized powder cake / sterile solution / dual-chamber kit" },
-      { label: "Packaging", ph: "Medical vial glass, rubber stopper, flip-off cap color, outer box" },
-      { label: "MOQ Target", ph: "Initial batch size requirement (vials / units)" },
-      { label: "Regulatory Market", ph: "MFDS Korea, EU CPNP, US FDA, ASEAN, or LATAM" },
-      { label: "Storage Requirement", ph: "Ambient / 2–8°C refrigerated / ultra-cold frozen" },
-    ],
-    notes: "Additional Project Requirements",
-    notesPh: "Reference target products, preferred launches, documentation needs, clinical trials...",
-    submit: "Initiate Custom Development Project",
-    success: "Project brief successfully transmitted. Our Korean R&D specialists will contact you within two business days.",
-    pathEyebrow: "Development Pathway",
-    pathTitle: "From Concept Brief to Mass Production in Korea",
-    steps: [
-      "Brief & Feasibility",
-      "Formulation Design",
-      "Micro-Fluidic Prototype",
-      "Stability & Analytics",
-      "cGMP Pilot Production",
-    ],
-    deliverEyebrow: "Project Deliverables",
-    deliverTitle: "What International Partners Receive",
-    deliverables: [
-      "Official formulation specification & master recipe sheet",
-      "Prototype batch samples for clinical evaluation & sensory test",
-      "Comprehensive stability and analytical test reports from Seoul lab",
-      "Validated cGMP manufacturing process description",
-      "Primary packaging compatibility test & customized box artwork",
-      "Complete export regulatory dossier package for target destination",
-    ],
-    fullForm: "Prefer our standard detailed inquiry form?",
-    fullFormCta: "Go to Contact Page",
-  },
-  ko: {
-    eyebrow: "OEM / ODM / 맞춤 개발",
-    title: "나만의 한국형 바이오 재생 제품을 개발하세요",
-    lead: "원하시는 제품 규격을 알려주시면, 베스코 사이언스 서울 제형·분석·cGMP 생산팀이 검증된 고품질 제품으로 실현해 드립니다.",
-    briefEyebrow: "프로젝트 브리프",
-    briefTitle: "제품 규격 정의",
-    briefIntro:
-      "아래 항목에 원하시는 타겟 사양을 입력해 주세요. 한국 R&D 개발팀이 타당성 검토 및 견적 산출을 위한 기초 자료로 활용합니다.",
-    fields: [
-      { label: "제품 카테고리", ph: "엑소좀 / PDRN / 스킨부스터 / 두피 케어 / 맞춤 바이오 제형" },
-      { label: "목표 시장", ph: "수출 대상 국가 및 지역 유통망" },
-      { label: "주성분", ph: "줄기세포 엑소좀, PDRN/PN, 성장인자, 펩타이드 복합체" },
-      { label: "희망 함량", ph: "예: 바이알당 50억 입자 또는 mg/mL" },
-      { label: "제형", ph: "동결건조 분말 케이크 / 멸균 액상 / 듀얼 챔버 키트" },
-      { label: "포장", ph: "바이알 용기, 고무마개, 캡 컬러, 전용 화장품 박스" },
-      { label: "MOQ 목표", ph: "초기 생산 희망 수량 (바이알 / 개)" },
-      { label: "규제 시장", ph: "식약처(MFDS), 유럽 CPNP, 미국 FDA 등" },
-      { label: "보관 조건", ph: "실온 보관 / 2–8°C 냉장 / 극저온 냉동" },
-    ],
-    notes: "추가 요청사항",
-    notesPh: "벤치마킹 타겟 제품, 론칭 희망 일정, 필독 검증 문서 등",
-    submit: "맞춤 개발 프로젝트 신청하기",
-    success: "프로젝트 브리프가 성공적으로 전달되었습니다. 영업일 기준 2일 이내 담당 연구원이 연락드립니다.",
-    pathEyebrow: "개발 경로",
-    pathTitle: "컨셉 수립부터 대한민국 cGMP 양산까지",
-    steps: ["브리프·타당성 검토", "제형 설계", "프로토타입 샘플링", "안정성·분석 검증", "cGMP 파일럿 양산"],
-    deliverEyebrow: "프로젝트 산출물",
-    deliverTitle: "파트너사 제공 항목",
-    deliverables: [
-      "공식 제형 규격서 및 원료 배합 비율표",
-      "임상 평가 및 관능 테스트용 프로토타입 바이알 샘플",
-      "서울 연구소 발행 가속·장기 안정성 및 품질 분석 보고서",
-      "검증된 cGMP 표준 제조 공정 설명서",
-      "용기 상성 테스트 및 브랜드 맞춤 패키지 적용",
-      "목적국 등록용 규제 문서 지원 패키지 (COA, TDS, SDS)",
-    ],
-    fullForm: "상세 문의 양식이 필요하신가요?",
-    fullFormCta: "문의 페이지로 이동",
-  },
-} as const;
+const FALLBACK_FIELDS = [
+  { label: "Product Category", ph: "Exosome / PDRN / Skin Booster / Hair Scalp / Custom Biologic" },
+  { label: "Target Market", ph: "Destination country or regional distribution market" },
+  { label: "Active Ingredient", ph: "Stem cell exosome, PDRN/PN, growth factors, peptides" },
+  { label: "Desired Concentration", ph: "e.g. 5.0 × 10¹⁰ particles/vial or mg/mL" },
+  { label: "Dosage Form", ph: "Lyophilized powder / sterile solution / dual-chamber kit" },
+  { label: "Packaging", ph: "Medical vial glass, rubber stopper, flip-off cap color, outer box" },
+  { label: "MOQ Target", ph: "Initial batch size requirement (vials / units)" },
+  { label: "Regulatory Market", ph: "MFDS Korea, EU CPNP, US FDA, ASEAN, or LATAM" },
+  { label: "Storage Requirement", ph: "Ambient / 2–8°C refrigerated / ultra-cold frozen" },
+];
+
+const FALLBACK_STEPS = [
+  "Brief & Feasibility",
+  "Formulation Design",
+  "Micro-Fluidic Prototype",
+  "Stability & Analytics",
+  "cGMP Pilot Production",
+];
+
+const FALLBACK_DELIVERABLES = [
+  "Official formulation specification & master recipe sheet",
+  "Prototype batch samples for clinical evaluation & sensory test",
+  "Comprehensive stability and analytical test reports from Seoul lab",
+  "Validated cGMP manufacturing process description",
+  "Primary packaging compatibility test & customized box artwork",
+  "Complete export regulatory dossier package for target destination",
+];
 
 function Page() {
-  const { locale, t } = useI18n();
-  const c = COPY[locale as keyof typeof COPY] ?? COPY.en;
+  const { t } = useI18n();
+  const cms: any = Route.useLoaderData();
+
+  const hero = cms?.hero ?? {};
+  const pathway = cms?.pathway ?? {};
+  const cleanroomSec = cms?.cleanroomSection ?? {};
+  const form = cms?.form ?? {};
+  const deliverables = cms?.deliverables ?? {};
+
+  const pathSteps: string[] = Array.isArray(pathway.steps) && pathway.steps.length > 0 ? pathway.steps : FALLBACK_STEPS;
+  const formFields: { label: string; ph: string }[] = Array.isArray(form.fields) && form.fields.length > 0 ? form.fields : FALLBACK_FIELDS;
+  const deliverItems: string[] = Array.isArray(deliverables.items) && deliverables.items.length > 0 ? deliverables.items : FALLBACK_DELIVERABLES;
+
   const [sent, setSent] = useState(false);
 
   return (
     <>
       <PageHero
-        eyebrow={c.eyebrow}
-        title={c.title}
-        lead={c.lead}
-        image={lyophilizer}
+        eyebrow={hero.eyebrow ?? "OEM / ODM / Custom Development"}
+        title={hero.title ?? "Build Your Own Korean Regenerative Product"}
+        lead={hero.lead ?? "Tell us the specification you need. Our Seoul-based formulation, analytical and cGMP production teams translate your requirements into a compliant, document-backed biological product."}
+        image={hero.image ?? lyophilizer}
         imageAlt="State-of-the-art lyophilization suite in Korean production facility"
-        crumb={{ label: c.title, homeLabel: t("common.breadcrumbHome") }}
+        crumb={{ label: "Custom Development", homeLabel: t("common.breadcrumbHome") }}
       />
 
-      {/* ---------- DEVELOPMENT PATHWAY ---------- */}
+      {/* DEVELOPMENT PATHWAY */}
       <Section>
-        <SectionHeading eyebrow={c.pathEyebrow} title={c.pathTitle} />
+        <SectionHeading
+          eyebrow={pathway.eyebrow ?? "Development Pathway"}
+          title={pathway.title ?? "From Concept Brief to Mass Production in Korea"}
+        />
         <div className="mt-12">
-          <ProcessFlow steps={[...c.steps]} />
+          <ProcessFlow steps={pathSteps} />
         </div>
       </Section>
 
-      {/* ---------- KOREAN STERILE CLEANROOM (IMAGE 2) ---------- */}
+      {/* CLEANROOM SECTION (IMAGE 2) */}
       <Section tone="white">
         <div className="grid gap-14 lg:grid-cols-2 lg:items-center">
           <Reveal>
             <div className="relative">
               <img
-                src={koreanCleanroom}
+                src={cleanroomSec.image ?? koreanCleanroom}
                 alt="Cleanroom technicians operating automated aseptic vial filling machinery in Korea"
                 loading="lazy"
-                width={1280}
-                height={960}
                 className="aspect-[4/3] w-full object-cover"
               />
               <div className="absolute -bottom-5 -right-5 hidden border border-hairline bg-card px-6 py-5 md:block">
@@ -165,8 +113,8 @@ function Page() {
           <Reveal delay={120}>
             <div>
               <SectionHeading
-                eyebrow="Precision Engineering"
-                title="Korean cGMP Manufacturing Infrastructure for Custom Orders"
+                eyebrow={cleanroomSec.eyebrow ?? "Precision Engineering"}
+                title={cleanroomSec.title ?? "Korean cGMP Manufacturing Infrastructure for Custom Orders"}
               />
               <p className="mt-6 text-[1rem] leading-relaxed text-muted-foreground">
                 Our custom manufacturing lines are housed within ISO Class 5 cleanrooms, utilizing continuous automated environmental monitoring and nitrogen-purged filling technologies to preserve biological potency.
@@ -179,22 +127,21 @@ function Page() {
         </div>
       </Section>
 
-      {/* ---------- PROJECT BRIEF FORM ---------- */}
+      {/* PROJECT BRIEF FORM */}
       <Section tone="white" id="brief">
-        <SectionHeading eyebrow={c.briefEyebrow} title={c.briefTitle} intro={c.briefIntro} />
+        <SectionHeading
+          eyebrow={form.eyebrow ?? "Project Brief"}
+          title={form.title ?? "Define Your Product Specification"}
+          intro={form.intro ?? "Submit your initial target parameters below. Every field provides our Korean formulation team with essential data to prepare a customized feasibility study and development roadmap."}
+        />
         <Reveal>
           <form
             className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
-            onSubmit={(e) => {
-              e.preventDefault();
-              setSent(true);
-            }}
+            onSubmit={e => { e.preventDefault(); setSent(true); }}
           >
-            {c.fields.map((f) => (
-              <label key={f.label} className="block">
-                <span className="text-[0.72rem] font-semibold tracking-[0.14em] uppercase text-science">
-                  {f.label}
-                </span>
+            {formFields.map((f, i) => (
+              <label key={i} className="block">
+                <span className="text-[0.72rem] font-semibold tracking-[0.14em] uppercase text-science">{f.label}</span>
                 <input
                   type="text"
                   placeholder={f.ph}
@@ -204,11 +151,11 @@ function Page() {
             ))}
             <label className="block sm:col-span-2 lg:col-span-3">
               <span className="text-[0.72rem] font-semibold tracking-[0.14em] uppercase text-science">
-                {c.notes}
+                {form.notes ?? "Additional Project Requirements"}
               </span>
               <textarea
                 rows={4}
-                placeholder={c.notesPh}
+                placeholder={form.notesPh ?? "Reference target products, preferred launches, documentation needs, clinical trials..."}
                 className="mt-2 w-full border border-hairline bg-card px-4 py-3 text-[0.93rem] text-foreground outline-none transition-colors placeholder:text-muted-foreground/60 focus:border-teal"
               />
             </label>
@@ -217,28 +164,23 @@ function Page() {
                 type="submit"
                 className="inline-flex items-center gap-3 rounded-sm bg-teal px-7 py-3.5 text-[0.8rem] font-semibold tracking-[0.14em] uppercase text-[#05231f] transition-colors hover:bg-teal/85"
               >
-                {c.submit}
+                {form.submit ?? "Initiate Custom Development Project"}
               </button>
               <span className="text-[0.85rem] text-muted-foreground">
-                {c.fullForm}{" "}
-                <Link to="/contact" className="text-science underline underline-offset-4">
-                  {c.fullFormCta}
-                </Link>
+                Prefer our standard detailed inquiry form?{" "}
+                <Link to="/contact" className="text-science underline underline-offset-4">Go to Contact Page</Link>
               </span>
             </div>
-            {sent ? (
-              <p
-                role="status"
-                className="sm:col-span-2 lg:col-span-3 border-l-2 border-teal bg-secondary px-6 py-4 text-[0.9rem] text-navy"
-              >
-                {c.success}
+            {sent && (
+              <p role="status" className="sm:col-span-2 lg:col-span-3 border-l-2 border-teal bg-secondary px-6 py-4 text-[0.9rem] text-navy">
+                Project brief successfully transmitted. Our Korean R&D specialists will contact you within two business days.
               </p>
-            ) : null}
+            )}
           </form>
         </Reveal>
       </Section>
 
-      {/* ---------- KOREAN R&D FORMULATION TEAM (IMAGE 3) ---------- */}
+      {/* R&D SCIENTISTS (IMAGE 3) */}
       <Section tone="white">
         <div className="grid gap-14 lg:grid-cols-2 lg:items-center">
           <Reveal delay={120}>
@@ -259,10 +201,8 @@ function Page() {
             <div className="relative">
               <img
                 src={koreanScientists}
-                alt="Korean biological researchers conducting formulation trials in a modern lab"
+                alt="Korean biological researchers conducting formulation trials"
                 loading="lazy"
-                width={1280}
-                height={960}
                 className="aspect-[4/3] w-full object-cover"
               />
               <div className="absolute -bottom-5 -right-5 hidden border border-hairline bg-card px-6 py-5 md:block">
@@ -274,12 +214,15 @@ function Page() {
         </div>
       </Section>
 
-      {/* ---------- DELIVERABLES ---------- */}
+      {/* DELIVERABLES */}
       <Section tone="muted">
-        <SectionHeading eyebrow={c.deliverEyebrow} title={c.deliverTitle} />
+        <SectionHeading
+          eyebrow={deliverables.eyebrow ?? "Project Deliverables"}
+          title={deliverables.title ?? "What International Partners Receive"}
+        />
         <ul className="mt-12 grid gap-px bg-hairline sm:grid-cols-2 lg:grid-cols-3">
-          {c.deliverables.map((d) => (
-            <li key={d} className="bg-card px-6 py-5 text-[0.95rem] text-navy">
+          {deliverItems.map((d, i) => (
+            <li key={i} className="bg-card px-6 py-5 text-[0.95rem] text-navy">
               <span className="mr-3 inline-block h-1.5 w-1.5 translate-y-[-2px] bg-teal align-middle" />
               {d}
             </li>
@@ -291,4 +234,3 @@ function Page() {
     </>
   );
 }
-

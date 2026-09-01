@@ -1,0 +1,60 @@
+src/components/admin/PdfImport.tsx(43,29): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/components/admin/PdfImport.tsx(44,19): error TS2532: Object is possibly 'undefined'.
+src/components/admin/PdfImport.tsx(73,11): error TS2532: Object is possibly 'undefined'.
+src/components/admin/PdfImport.tsx(82,5): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/components/admin/PdfImport.tsx(92,11): error TS18048: 'l' is possibly 'undefined'.
+src/components/admin/PdfImport.tsx(92,37): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/components/admin/PdfImport.tsx(93,11): error TS18048: 'l' is possibly 'undefined'.
+src/components/admin/PdfImport.tsx(93,39): error TS18048: 'l' is possibly 'undefined'.
+src/components/admin/PdfImport.tsx(135,30): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/components/admin/PdfImport.tsx(241,26): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/components/admin/SectionEditors.tsx(227,5): error TS2322: Type '{ title?: string; desc?: string; }' is not assignable to type '{ title: string; desc: string; }'.
+  Property 'title' is optional in type '{ title?: string; desc?: string; }' but required in type '{ title: string; desc: string; }'.
+src/components/admin/SectionEditors.tsx(257,5): error TS2322: Type '{ num?: string; title?: string; body?: string; }' is not assignable to type '{ num: string; title: string; body: string; }'.
+  Property 'num' is optional in type '{ num?: string; title?: string; body?: string; }' but required in type '{ num: string; title: string; body: string; }'.
+src/components/admin/UniversalSectionEditors.tsx(116,78): error TS2322: Type '{ num?: string; title?: string; body?: string; }' is not assignable to type '{ num: string; title: string; body: string; }'.
+  Property 'num' is optional in type '{ num?: string; title?: string; body?: string; }' but required in type '{ num: string; title: string; body: string; }'.
+src/components/admin/UniversalSectionEditors.tsx(136,78): error TS2322: Type '{ title?: string; items?: { q: string; a: string; }[]; }' is not assignable to type '{ title: string; items: { q: string; a: string; }[]; }'.
+  Property 'title' is optional in type '{ title?: string; items?: { q: string; a: string; }[]; }' but required in type '{ title: string; items: { q: string; a: string; }[]; }'.
+src/components/admin/UniversalSectionEditors.tsx(138,44): error TS2532: Object is possibly 'undefined'.
+src/components/admin/UniversalSectionEditors.tsx(138,58): error TS2322: Type '{ q?: string; a?: string; }' is not assignable to type '{ q: string; a: string; }'.
+  Property 'q' is optional in type '{ q?: string; a?: string; }' but required in type '{ q: string; a: string; }'.
+src/components/admin/UniversalSectionEditors.tsx(138,96): error TS2322: Type '{ items: { q: string; a: string; }[]; title?: string; }' is not assignable to type '{ title: string; items: { q: string; a: string; }[]; }'.
+  Property 'title' is optional in type '{ items: { q: string; a: string; }[]; title?: string; }' but required in type '{ title: string; items: { q: string; a: string; }[]; }'.
+src/components/admin/UniversalSectionEditors.tsx(164,75): error TS2322: Type '{ title?: string; meta?: string; restricted?: boolean; }' is not assignable to type '{ title: string; meta: string; restricted: boolean; }'.
+  Property 'title' is optional in type '{ title?: string; meta?: string; restricted?: boolean; }' but required in type '{ title: string; meta: string; restricted: boolean; }'.
+src/components/admin/UniversalSectionEditors.tsx(187,78): error TS2322: Type '{ num?: string; slug?: string; title?: string; body?: string; }' is not assignable to type '{ num: string; slug: string; title: string; body: string; }'.
+  Property 'num' is optional in type '{ num?: string; slug?: string; title?: string; body?: string; }' but required in type '{ num: string; slug: string; title: string; body: string; }'.
+src/components/admin/UniversalSectionEditors.tsx(208,78): error TS2322: Type '{ key?: string; title?: string; items?: { slug: string; name: string; }[]; }' is not assignable to type '{ key: string; title: string; items: { slug: string; name: string; }[]; }'.
+  Property 'key' is optional in type '{ key?: string; title?: string; items?: { slug: string; name: string; }[]; }' but required in type '{ key: string; title: string; items: { slug: string; name: string; }[]; }'.
+src/components/admin/UniversalSectionEditors.tsx(210,44): error TS2532: Object is possibly 'undefined'.
+src/components/admin/UniversalSectionEditors.tsx(210,58): error TS2322: Type '{ slug?: string; name?: string; }' is not assignable to type '{ slug: string; name: string; }'.
+  Property 'slug' is optional in type '{ slug?: string; name?: string; }' but required in type '{ slug: string; name: string; }'.
+src/components/admin/UniversalSectionEditors.tsx(210,96): error TS2322: Type '{ items: { slug: string; name: string; }[]; key?: string; title?: string; }' is not assignable to type '{ key: string; title: string; items: { slug: string; name: string; }[]; }'.
+  Property 'key' is optional in type '{ items: { slug: string; name: string; }[]; key?: string; title?: string; }' but required in type '{ key: string; title: string; items: { slug: string; name: string; }[]; }'.
+src/components/admin/UniversalSectionEditors.tsx(241,78): error TS2322: Type '{ slug?: string; category?: string; title?: string; excerpt?: string; }' is not assignable to type '{ slug: string; category: string; title: string; excerpt: string; }'.
+  Property 'slug' is optional in type '{ slug?: string; category?: string; title?: string; excerpt?: string; }' but required in type '{ slug: string; category: string; title: string; excerpt: string; }'.
+src/components/admin/UniversalSectionEditors.tsx(262,78): error TS2322: Type '{ title?: string; body?: string; }' is not assignable to type '{ title: string; body: string; }'.
+  Property 'title' is optional in type '{ title?: string; body?: string; }' but required in type '{ title: string; body: string; }'.
+src/components/admin/UniversalSectionEditors.tsx(279,78): error TS2322: Type '{ name?: string; status?: string; }' is not assignable to type '{ name: string; status: string; }'.
+  Property 'name' is optional in type '{ name?: string; status?: string; }' but required in type '{ name: string; status: string; }'.
+src/components/admin/UniversalSectionEditors.tsx(297,78): error TS2322: Type '{ title?: string; body?: string; }' is not assignable to type '{ title: string; body: string; }'.
+  Property 'title' is optional in type '{ title?: string; body?: string; }' but required in type '{ title: string; body: string; }'.
+src/components/admin/UniversalSectionEditors.tsx(314,78): error TS2322: Type '{ label?: string; ph?: string; }' is not assignable to type '{ label: string; ph: string; }'.
+  Property 'label' is optional in type '{ label?: string; ph?: string; }' but required in type '{ label: string; ph: string; }'.
+src/components/admin/UniversalSectionEditors.tsx(332,80): error TS2322: Type '{ title?: string; items?: string[]; }' is not assignable to type '{ title: string; items: string[]; }'.
+  Property 'title' is optional in type '{ title?: string; items?: string[]; }' but required in type '{ title: string; items: string[]; }'.
+src/lib/supabase.ts(4,19): error TS4111: Property 'VITE_SUPABASE_URL' comes from an index signature, so it must be accessed with ['VITE_SUPABASE_URL'].
+src/lib/supabase.ts(6,19): error TS4111: Property 'VITE_SUPABASE_ANON_KEY' comes from an index signature, so it must be accessed with ['VITE_SUPABASE_ANON_KEY'].
+src/lib/supabase.ts(35,21): error TS4111: Property 'VITE_SUPABASE_URL' comes from an index signature, so it must be accessed with ['VITE_SUPABASE_URL'].
+src/lib/supabase.ts(36,21): error TS4111: Property 'VITE_SUPABASE_ANON_KEY' comes from an index signature, so it must be accessed with ['VITE_SUPABASE_ANON_KEY'].
+src/lib/supabase.ts(37,21): error TS4111: Property 'VITE_SUPABASE_URL' comes from an index signature, so it must be accessed with ['VITE_SUPABASE_URL'].
+src/routes/admin-login.tsx(27,18): error TS2820: Type '"/admin/"' is not assignable to type '"." | "/" | "/about" | "/admin" | "/admin-login" | "/contact" | "/custom-development" | "/facility" | "/faq" | "/insights" | "/oem" | "/quality" | "/research" | "/resources" | ... 9 more ... | ".."'. Did you mean '"/admin"'?
+src/routes/admin/route.tsx(99,17): error TS2322: Type '`/admin/pages/${string}`' is not assignable to type '"." | "/" | "/about" | "/admin" | "/admin-login" | "/contact" | "/custom-development" | "/facility" | "/faq" | "/insights" | "/oem" | "/quality" | "/research" | "/resources" | ... 9 more ... | ".."'.
+src/routes/insights.tsx(30,9): error TS2322: Type 'any[] | readonly ["Exosome Science", "PDRN / PN", "Manufacturing", "Korean Biotechnology", "Regulatory", "Industry Insights"]' is not assignable to type 'string[]'.
+  The type 'readonly ["Exosome Science", "PDRN / PN", "Manufacturing", "Korean Biotechnology", "Regulatory", "Industry Insights"]' is 'readonly' and cannot be assigned to the mutable type 'string[]'.

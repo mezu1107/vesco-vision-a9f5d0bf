@@ -9,6 +9,7 @@ import {
 } from "@/components/site/primitives";
 import { CTABand } from "@/components/site/CTABand";
 import { useI18n } from "@/lib/i18n";
+import { loadCmsPage } from "@/lib/cms-page";
 import exosomeImg from "@/assets/exosome.jpg";
 import lyoImg from "@/assets/lyophilizer.jpg";
 import molecularImg from "@/assets/molecular.jpg";
@@ -29,9 +30,11 @@ const SLUG_IMAGES: Record<string, string> = {
 const SLUGS = ["exosome", "pdrn-pn", "lyophilization", "formulation", "cold-chain", "custom"];
 
 export const Route = createFileRoute("/technology/$slug")({
-  loader: ({ params }) => {
+  loader: async ({ params }) => {
     if (!SLUGS.includes(params.slug)) throw notFound();
-    return { slug: params.slug };
+    // Load the CMS technology page data (cards, exosome block, characterization)
+    const cmsData = await loadCmsPage("technology");
+    return { slug: params.slug, cmsData };
   },
   head: ({ params }) => {
     const label = (params.slug ?? "").replace(/-/g, " ");
@@ -61,11 +64,29 @@ type Card = { num: string; slug: string; title: string; body: string };
 type Group = { title: string; items: string[] };
 
 function Page() {
-  const { slug } = Route.useParams();
+  const { slug, cmsData } = Route.useLoaderData();
   const { t, tx } = useI18n();
-  const cards = tx<Card[]>("technology.cards") ?? [];
-  const card = cards.find((c) => c.slug === slug);
 
+  // ── CMS data (with i18n as fallback) ────────────────────────────────────
+  // Cards: prefer CMS, fall back to i18n
+  const cmsCards: Card[] = Array.isArray(cmsData?.cards) && cmsData.cards.length > 0
+    ? cmsData.cards
+    : (tx<Card[]>("technology.cards") ?? []);
+
+  const card = cmsCards.find((c) => c.slug === slug);
+
+  // Exosome block
+  const cmsExosome = cmsData?.exosome ?? {};
+  const steps: string[] = Array.isArray(cmsExosome.steps) && cmsExosome.steps.length > 0
+    ? cmsExosome.steps
+    : (tx<string[]>("exosome.steps") ?? []);
+
+  // Characterization groups: from quality cms page or i18n
+  const cmsGroups: Group[] = Array.isArray(cmsData?.characterization?.groups) && cmsData.characterization.groups.length > 0
+    ? cmsData.characterization.groups
+    : (tx<Group[]>("characterization.groups") ?? []);
+
+  // Page key blocks for pdrn/lyo/formulation slugs
   const pageKey =
     slug === "pdrn-pn"
       ? "pages.pdrnPage"
@@ -77,14 +98,17 @@ function Page() {
 
   const blocks = pageKey ? (tx<Block[]>(`${pageKey}.blocks`) ?? []) : [];
   const isExosome = slug === "exosome";
-  const groups = tx<Group[]>("characterization.groups") ?? [];
-  const steps = tx<string[]>("exosome.steps") ?? [];
 
-  const title = pageKey ? t(`${pageKey}.title`) : isExosome ? t("exosome.title") : (card?.title ?? slug);
+  const title = pageKey
+    ? t(`${pageKey}.title`)
+    : isExosome
+      ? (cmsExosome.title ?? t("exosome.title"))
+      : (card?.title ?? slug);
+
   const lead = pageKey
     ? t(`${pageKey}.lead`)
     : isExosome
-      ? t("pages.exosomePage.lead")
+      ? (cmsExosome.body1 ?? t("pages.exosomePage.lead"))
       : (card?.body ?? "");
 
   return (
@@ -100,26 +124,33 @@ function Page() {
 
       {isExosome ? (
         <>
+          {/* Exosome intro */}
           <Section>
             <div className="grid gap-12 lg:grid-cols-2">
               <SectionHeading
-                eyebrow={t("exosome.eyebrow")}
-                title={t("exosome.title")}
-                intro={t("exosome.body1")}
+                eyebrow={cmsExosome.eyebrow ?? t("exosome.eyebrow")}
+                title={cmsExosome.title ?? t("exosome.title")}
+                intro={cmsExosome.body1 ?? t("exosome.body1")}
               />
               <p className="text-[1.0625rem] leading-relaxed text-muted-foreground lg:pt-24">
-                {t("exosome.body2")}
+                {cmsExosome.body2 ?? t("exosome.body2")}
               </p>
             </div>
           </Section>
 
+          {/* Process flow */}
           <Section tone="navy">
-            <SectionHeading invert eyebrow={t("exosome.eyebrow")} title={t("exosome.processTitle")} />
+            <SectionHeading
+              invert
+              eyebrow={cmsExosome.eyebrow ?? t("exosome.eyebrow")}
+              title={cmsExosome.processTitle ?? t("exosome.processTitle")}
+            />
             <div className="mt-12">
               <ProcessFlow steps={steps} invert />
             </div>
           </Section>
 
+          {/* Characterization groups */}
           <Section tone="white">
             <SectionHeading
               eyebrow={t("characterization.eyebrow")}
@@ -127,13 +158,13 @@ function Page() {
               intro={t("characterization.intro")}
             />
             <div className="mt-12 grid gap-px bg-hairline sm:grid-cols-2 lg:grid-cols-4">
-              {groups.map((g, i) => (
-                <Reveal key={g.title} delay={i * 60}>
+              {cmsGroups.map((g, i) => (
+                <Reveal key={i} delay={i * 60}>
                   <div className="h-full bg-card p-7">
                     <h3 className="text-[1.05rem] font-semibold text-navy">{g.title}</h3>
                     <ul className="mt-4 space-y-2">
-                      {g.items.map((it) => (
-                        <li key={it} className="text-[0.9rem] text-muted-foreground">
+                      {g.items.map((it, j) => (
+                        <li key={j} className="text-[0.9rem] text-muted-foreground">
                           <span className="mr-3 inline-block h-1.5 w-1.5 translate-y-[-2px] bg-teal align-middle" />
                           {it}
                         </li>
@@ -146,16 +177,17 @@ function Page() {
           </Section>
         </>
       ) : (
+        /* Non-exosome slug pages */
         <Section>
           <SectionHeading
             eyebrow={t("technology.eyebrow")}
             title={title}
             intro={card?.body ?? t("technology.intro")}
           />
-          {blocks.length ? (
+          {blocks.length > 0 && (
             <div className="mt-14 grid gap-8 md:grid-cols-3">
               {blocks.map((b, i) => (
-                <Reveal key={b.title} delay={i * 70}>
+                <Reveal key={i} delay={i * 70}>
                   <article className="card-flat h-full p-8">
                     <h3 className="text-[1.1rem] font-semibold text-navy">{b.title}</h3>
                     <p className="mt-4 text-[0.95rem] leading-relaxed text-muted-foreground">
@@ -165,16 +197,16 @@ function Page() {
                 </Reveal>
               ))}
             </div>
-          ) : null}
+          )}
 
-          {/* ---------- DEEP PLATFORM SPECIFICATIONS GRID ---------- */}
+          {/* Technical specs grid */}
           <div className="mt-16 border border-hairline bg-card p-8 md:p-10">
             <h3 className="eyebrow text-science">Technical Platform Specifications & Standards</h3>
             <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {[
                 { label: "Purity Index", val: "> 99.4% HPLC Single-Peak Integrity" },
                 { label: "Endotoxin Limit", val: "< 0.05 EU/mL (LAL Kinetic Chromogenic)" },
-                { label: "Bioburden Standard", val: "Sterile (SAL 10^-6 ISO 13485 Verified)" },
+                { label: "Bioburden Standard", val: "Sterile (SAL 10\u207b\u2076 ISO 13485 Verified)" },
                 { label: "Storage Stability", val: "24 Months (-20°C / Lyophilized +4°C)" },
               ].map((spec) => (
                 <div key={spec.label} className="border-l-2 border-teal bg-background p-5">
@@ -189,7 +221,7 @@ function Page() {
         </Section>
       )}
 
-      {/* ---------- KOREAN CLEANROOM ENGINEERING SECTION (IMAGE 2) ---------- */}
+      {/* Cleanroom section */}
       <Section tone="white">
         <div className="grid gap-14 lg:grid-cols-2 lg:items-center">
           <Reveal>
@@ -198,8 +230,6 @@ function Page() {
                 src={koreanCleanroom}
                 alt={`cGMP processing facility in Korea for ${title}`}
                 loading="lazy"
-                width={1280}
-                height={960}
                 className="aspect-[4/3] w-full object-cover"
               />
               <div className="absolute -bottom-5 -right-5 hidden border border-hairline bg-card px-6 py-5 md:block">
@@ -210,35 +240,35 @@ function Page() {
           </Reveal>
           <Reveal delay={120}>
             <div>
-              <SectionHeading
-                eyebrow="Aseptic Control"
-                title={`Rigorous cGMP Execution for ${title}`}
-              />
+              <SectionHeading eyebrow="Aseptic Control" title={`Rigorous cGMP Execution for ${title}`} />
               <p className="mt-6 text-[1rem] leading-relaxed text-muted-foreground">
-                All unit operations for the {title} platform are performed inside Class 100 cleanroom environments located in our Seoul facility. Automated pressure cascading and inline filtration ensure compliance with Korean MFDS regulations.
+                All unit operations for the {title} platform are performed inside Class 100 cleanroom
+                environments located in our Seoul facility. Automated pressure cascading and inline
+                filtration ensure compliance with Korean MFDS regulations.
               </p>
               <p className="mt-4 text-[1rem] leading-relaxed text-muted-foreground">
-                This manufacturing rigor guarantees zero bioburden contamination and batch-to-batch structural consistency.
+                This manufacturing rigor guarantees zero bioburden contamination and batch-to-batch
+                structural consistency.
               </p>
             </div>
           </Reveal>
         </div>
       </Section>
 
-      {/* ---------- KOREAN SCIENTISTS ANALYTICAL VERIFICATION (IMAGE 3) ---------- */}
+      {/* Scientists section */}
       <Section tone="white">
         <div className="grid gap-14 lg:grid-cols-2 lg:items-center">
           <Reveal delay={120}>
             <div>
-              <SectionHeading
-                eyebrow="Scientific Rigor"
-                title={`Analytical Quality Verification for ${title}`}
-              />
+              <SectionHeading eyebrow="Scientific Rigor" title={`Analytical Quality Verification for ${title}`} />
               <p className="mt-6 text-[1rem] leading-relaxed text-muted-foreground">
-                Our Seoul biological testing lab runs daily HPLC purity, molecular weight distribution, and particle concentration assays to confirm that every batch meeting the specifications of the {title} platform.
+                Our Seoul biological testing lab runs daily HPLC purity, molecular weight distribution,
+                and particle concentration assays to confirm that every batch meets the specifications
+                of the {title} platform.
               </p>
               <p className="mt-4 text-[1rem] leading-relaxed text-muted-foreground">
-                Comprehensive test reports accompany each lot shipped to OEM/ODM brand partners across North America, Europe, and Asia.
+                Comprehensive test reports accompany each lot shipped to OEM/ODM brand partners across
+                North America, Europe, and Asia.
               </p>
             </div>
           </Reveal>
@@ -248,8 +278,6 @@ function Page() {
                 src={koreanScientists}
                 alt={`Korean biological QC scientists verifying assays for ${title}`}
                 loading="lazy"
-                width={1280}
-                height={960}
                 className="aspect-[4/3] w-full object-cover"
               />
               <div className="absolute -bottom-5 -right-5 hidden border border-hairline bg-card px-6 py-5 md:block">
@@ -261,14 +289,15 @@ function Page() {
         </div>
       </Section>
 
+      {/* Related technologies */}
       <Section tone="muted">
         <SectionHeading eyebrow={t("technology.eyebrow")} title={t("technology.title")} />
         <div className="mt-10 grid gap-px bg-hairline sm:grid-cols-2 lg:grid-cols-3">
-          {cards
+          {cmsCards
             .filter((c) => c.slug !== slug)
-            .map((c) => (
+            .map((c, i) => (
               <Link
-                key={c.slug}
+                key={c.slug ?? i}
                 to="/technology/$slug"
                 params={{ slug: c.slug }}
                 className="group bg-card p-7 transition-colors hover:bg-card/60"
@@ -291,4 +320,3 @@ function Page() {
     </>
   );
 }
-
