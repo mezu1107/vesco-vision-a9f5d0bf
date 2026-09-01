@@ -1,8 +1,10 @@
-import heroLab from "@/assets/hero-lab.jpg";
-import cleanroom from "@/assets/cleanroom.jpg";
-import exosomeImg from "@/assets/exosome.jpg";
-import vials from "@/assets/vials.jpg";
-import qcLab from "@/assets/qc-lab.jpg";
+// ── No asset imports ──────────────────────────────────────────────────────────
+// This file is dynamically imported inside createServerFn handlers (SSR/Vercel).
+// Vite static asset imports (import x from "*.jpg") are NOT available in the
+// Node.js server bundle. Using plain public-folder URLs instead so both the
+// server and client can resolve them. All images are copied to /public/ so they
+// are served at e.g. /hero-lab.jpg in production.
+// ─────────────────────────────────────────────────────────────────────────────
 
 export const defaultHomeData = {
   hero: {
@@ -10,7 +12,7 @@ export const defaultHomeData = {
     subheading: "From scientific discovery to scalable manufacturing.",
     body: "Vesco Science develops advanced biotechnology solutions through integrated R&D, formulation, manufacturing and quality systems.",
     buttonText: "Explore Our Technology",
-    image: heroLab,
+    image: "/hero-lab.jpg",
   },
   trustBar: [
     "R&D Driven",
@@ -24,7 +26,7 @@ export const defaultHomeData = {
     mainHeading: "Where Biotechnology Meets Manufacturing",
     copy: "Vesco Science combines biotechnology research, formulation expertise and manufacturing capabilities to develop advanced solutions for regenerative medicine, aesthetics and professional healthcare markets.",
     buttonText: "Discover Vesco Science →",
-    image: cleanroom, // Fallback for scientist/lab
+    image: "/cleanroom.jpg",
   },
   coreTechnology: {
     heading: "Technology at the Cellular Level",
@@ -55,7 +57,7 @@ export const defaultHomeData = {
   exosomeSection: {
     leftHeading: "EXOSOME TECHNOLOGY",
     leftSubheading: "From Cellular Source to Characterized Product",
-    image: exosomeImg,
+    image: "/exosome.jpg",
     process: [
       "Cell Source",
       "Culture",
@@ -71,7 +73,7 @@ export const defaultHomeData = {
     copy: "Our integrated development approach connects research, formulation, production and quality control to support the transition from concept to commercial manufacturing.",
     steps: ["R&D", "Development", "Production", "Quality"],
     buttonText: "Explore Manufacturing →",
-    image: vials,
+    image: "/vials.jpg",
   },
   quality: {
     heading: "Quality Built Into Every Stage",
@@ -84,7 +86,7 @@ export const defaultHomeData = {
       "Storage & Distribution",
     ],
     buttonText: "Our Quality System →",
-    image: qcLab,
+    image: "/qc-lab.jpg",
   },
   finalCta: {
     heading: "Let's Build the Future of Regenerative Biotechnology",
@@ -98,40 +100,25 @@ export const defaultAboutData = {
     heading: "Advancing Biotechnology Through Science & Manufacturing",
     copy: "Vesco Science Co., Ltd. is a South Korea–based biotechnology company focused on the research, development and manufacturing of advanced solutions for regenerative medicine, aesthetics and professional healthcare applications.\n\nBy connecting scientific development with controlled manufacturing, Vesco Science works to transform innovative biological technologies into reliable, scalable and market-ready solutions.",
     buttons: ["Explore Our Technology →", "Explore Our Manufacturing →"],
-    image: cleanroom,
+    image: "/cleanroom.jpg",
   },
   whoWeAre: {
     heading: "WHO WE ARE",
     subheading: "Where Science Meets Scalable Manufacturing",
     copy: "At Vesco Science, we believe that meaningful innovation requires more than scientific discovery. It requires the ability to translate research into reproducible formulations, controlled manufacturing processes and consistently documented products.",
     capabilities: [
-      {
-        title: "Research & Development",
-        desc: "Scientific exploration and product development.",
-      },
-      {
-        title: "Advanced Biotechnology",
-        desc: "Platforms including exosome, PDRN/PN, peptide and regenerative technologies.",
-      },
-      {
-        title: "Formulation Development",
-        desc: "Development and optimization of formulations according to product requirements.",
-      },
-      {
-        title: "Manufacturing",
-        desc: "Controlled production, filling and packaging capabilities.",
-      },
-      {
-        title: "Quality & Analysis",
-        desc: "Product-specific testing, documentation and quality control.",
-      },
+      { title: "Research & Development",    desc: "Scientific exploration and product development." },
+      { title: "Advanced Biotechnology",    desc: "Platforms including exosome, PDRN/PN, peptide and regenerative technologies." },
+      { title: "Formulation Development",   desc: "Development and optimization of formulations according to product requirements." },
+      { title: "Manufacturing",             desc: "Controlled production, filling and packaging capabilities." },
+      { title: "Quality & Analysis",        desc: "Product-specific testing, documentation and quality control." },
     ],
   },
   scientificApproach: {
     heading: "OUR SCIENTIFIC APPROACH",
     subheading: "FROM BIOLOGICAL SCIENCE TO FINISHED PRODUCT",
     copy: "At Vesco Science, we follow an integrated approach that connects scientific research with product development, controlled manufacturing, and quality assurance. From the initial biological concept to the finished product, each stage is designed to support consistency, precision, and product integrity.",
-    image: qcLab,
+    image: "/qc-lab.jpg",
   },
   manufacturing: {
     heading: "MANUFACTURING",
@@ -152,36 +139,12 @@ export const defaultAboutData = {
     subheading: "Quality Built Into Every Stage",
     copy: "At Vesco Science, quality is integrated throughout the entire product lifecycle — from raw material selection and process development to manufacturing, testing, documentation, storage and distribution.\n\nOur quality approach is designed to support product consistency, process control, traceability and integrity while meeting the defined requirements of each product and market.",
     points: [
-      {
-        num: "01",
-        title: "Raw Material Control",
-        desc: "Raw materials are carefully evaluated against defined specifications before entering the manufacturing process. This helps ensure material consistency, suitability, and quality from the very beginning.",
-      },
-      {
-        num: "02",
-        title: "Process Control",
-        desc: "Manufacturing processes are performed under defined and monitored conditions. Controlled procedures help maintain consistency, reproducibility, and reliable production across batches.",
-      },
-      {
-        num: "03",
-        title: "Analytical Testing",
-        desc: "Product-specific analytical testing is used to evaluate key quality attributes and characteristics. Testing helps verify that products meet their defined specifications and quality requirements.",
-      },
-      {
-        num: "04",
-        title: "Microbiological Testing",
-        desc: "Relevant microbiological assessments are conducted according to product requirements and applicable standards. These controls help support product safety, quality, and microbiological integrity.",
-      },
-      {
-        num: "05",
-        title: "Batch Traceability",
-        desc: "Each batch is supported by documented manufacturing and quality information. This enables traceability from raw materials and production through testing, review, and final release.",
-      },
-      {
-        num: "06",
-        title: "Storage & Distribution",
-        desc: "Products are stored and transported according to their defined storage and handling requirements. Appropriate conditions help maintain product integrity and quality throughout the supply chain.",
-      },
+      { num: "01", title: "Raw Material Control",     desc: "Raw materials are carefully evaluated against defined specifications before entering the manufacturing process. This helps ensure material consistency, suitability, and quality from the very beginning." },
+      { num: "02", title: "Process Control",           desc: "Manufacturing processes are performed under defined and monitored conditions. Controlled procedures help maintain consistency, reproducibility, and reliable production across batches." },
+      { num: "03", title: "Analytical Testing",        desc: "Product-specific analytical testing is used to evaluate key quality attributes and characteristics. Testing helps verify that products meet their defined specifications and quality requirements." },
+      { num: "04", title: "Microbiological Testing",   desc: "Relevant microbiological assessments are conducted according to product requirements and applicable standards. These controls help support product safety, quality, and microbiological integrity." },
+      { num: "05", title: "Batch Traceability",        desc: "Each batch is supported by documented manufacturing and quality information. This enables traceability from raw materials and production through testing, review, and final release." },
+      { num: "06", title: "Storage & Distribution",    desc: "Products are stored and transported according to their defined storage and handling requirements. Appropriate conditions help maintain product integrity and quality throughout the supply chain." },
     ],
   },
   partnership: {

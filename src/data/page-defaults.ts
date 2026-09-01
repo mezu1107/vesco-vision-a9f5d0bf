@@ -16,9 +16,7 @@ export const PAGE_DEFAULTS: Record<string, any> = {
       eyebrow: "Manufacturing",
       title: "Where Science Becomes Scalable",
       intro: "Development, production, filling and quality control operate as one controlled environment — so a validated laboratory process becomes a repeatable commercial batch.",
-      image: "/assets/vials.jpg",
-    },
-    areas: [
+      image: "/vials.jpg",
       { title: "R&D Laboratory", body: "Formulation development and method work." },
       { title: "Cleanroom", body: "Controlled environment for aseptic operations." },
       { title: "Production Area", body: "Compounding and bulk processing." },
