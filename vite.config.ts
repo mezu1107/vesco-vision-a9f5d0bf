@@ -9,12 +9,31 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 export default defineConfig({
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
-    // nitro/vite builds from this
     server: { entry: "server" },
   },
-  // Hard-pin the Nitro deploy target to Vercel for self-deployment. Inside a
-  // Lovable build, LOVABLE_NITRO_PRESET (Cloudflare) pins the preset and this
-  // override is ignored — so the Lovable preview keeps its Cloudflare target,
-  // while a `npm run build` on Vercel emits `.vercel/output`.
-  nitro: { preset: "vercel" },
+  // Hard-pin the Nitro deploy target to Vercel for self-deployment.
+  nitro: {
+    preset: "vercel",
+    // Explicitly forward VITE_* env vars into the Nitro/SSR server bundle.
+    // Without this, import.meta.env.VITE_* reads as undefined at Vercel runtime
+    // even when the env vars are set in the Vercel dashboard.
+    runtimeConfig: {
+      public: {
+        supabaseUrl: process.env.VITE_SUPABASE_URL ?? "",
+        supabaseAnonKey: process.env.VITE_SUPABASE_ANON_KEY ?? "",
+      },
+    },
+  },
+  vite: {
+    // Inject env vars into the SSR bundle explicitly so import.meta.env works
+    // in server-side code (createServerFn handlers, loaders) on Vercel.
+    define: {
+      "import.meta.env.VITE_SUPABASE_URL": JSON.stringify(
+        process.env.VITE_SUPABASE_URL ?? ""
+      ),
+      "import.meta.env.VITE_SUPABASE_ANON_KEY": JSON.stringify(
+        process.env.VITE_SUPABASE_ANON_KEY ?? ""
+      ),
+    },
+  },
 });

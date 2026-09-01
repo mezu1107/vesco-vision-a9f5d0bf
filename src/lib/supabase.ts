@@ -1,28 +1,28 @@
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
 
-// ── Lazy singleton ─────────────────────────────────────────────────────────
-// We defer createClient() to first call so the Supabase Realtime WebSocket
-// never initialises at module load time. This fixes the Vercel / Nitro Node.js
-// runtime crash that happens when the module is imported by the SSR bundle.
+// ── Environment variables ──────────────────────────────────────────────────
+// Vite injects VITE_* vars into both the client bundle AND the SSR/Nitro
+// server bundle at build time via import.meta.env. This is the only reliable
+// way to read them in TanStack Start + Vercel deploys.
+const SUPABASE_URL: string =
+  import.meta.env.VITE_SUPABASE_URL ?? "https://placeholder-url.supabase.co";
 
-let _client: SupabaseClient | null = null;
+const SUPABASE_ANON_KEY: string =
+  import.meta.env.VITE_SUPABASE_ANON_KEY ?? "placeholder-key";
 
-function getClient(): SupabaseClient {
+// ── Supabase public storage base URL ──────────────────────────────────────
+// Used in fallback.ts to build permanent image URLs that work on Vercel.
+export const SUPABASE_STORAGE_URL = `${SUPABASE_URL}/storage/v1/object/public/images`;
+
+// ── Client (lazy singleton) ────────────────────────────────────────────────
+// createClient() is called once on first use. Realtime is disabled with a
+// no-op WebSocket class so the Node.js 20 "no native WebSocket" warning never
+// fires on the Vercel runtime.
+let _client: ReturnType<typeof createClient> | null = null;
+
+function getClient() {
   if (_client) return _client;
 
-  // Read env vars — works in Vite (import.meta.env) and in Nitro/Node (process.env)
-  const url =
-    (typeof import.meta !== "undefined" ? (import.meta as any).env?.VITE_SUPABASE_URL : undefined) ??
-    (typeof process !== "undefined" ? process.env?.VITE_SUPABASE_URL : undefined) ??
-    "https://placeholder-url.supabase.co";
-
-  const key =
-    (typeof import.meta !== "undefined" ? (import.meta as any).env?.VITE_SUPABASE_ANON_KEY : undefined) ??
-    (typeof process !== "undefined" ? process.env?.VITE_SUPABASE_ANON_KEY : undefined) ??
-    "placeholder-key";
-
-  // No-op WebSocket transport — prevents any real WS connection being opened.
-  // We only need Supabase REST for DB queries; Realtime is not used.
   class NoopWS {
     static CONNECTING = 0;
     static OPEN = 1;
@@ -37,7 +37,7 @@ function getClient(): SupabaseClient {
     send() {}
   }
 
-  _client = createClient(url, key, {
+  _client = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     realtime: {
       transport: NoopWS as any,
       params: { eventsPerSecond: 0 },
@@ -47,32 +47,23 @@ function getClient(): SupabaseClient {
   return _client;
 }
 
-// Export a stable reference that delegates everything to the lazy singleton.
-// All supabase.from(...), supabase.storage etc. calls go through getClient().
+// Stable wrapper — delegates to lazy singleton on every call
 export const supabase = {
   get auth()    { return getClient().auth; },
   get storage() { return getClient().storage; },
-  from(table: string) { return getClient().from(table); },
-  rpc(fn: string, args?: object) { return getClient().rpc(fn, args); },
-  channel(name: string) { return getClient().channel(name); },
-  removeChannel(channel: any) { return getClient().removeChannel(channel); },
-  getChannels() { return getClient().getChannels(); },
+  from(table: string)              { return getClient().from(table); },
+  rpc(fn: string, args?: object)   { return getClient().rpc(fn, args); },
+  channel(name: string)            { return getClient().channel(name); },
+  removeChannel(ch: any)           { return getClient().removeChannel(ch); },
+  getChannels()                    { return getClient().getChannels(); },
 };
 
+// ── Config check ───────────────────────────────────────────────────────────
 export function hasValidSupabaseConfig(): boolean {
-  const url =
-    (typeof import.meta !== "undefined" ? (import.meta as any).env?.VITE_SUPABASE_URL : undefined) ??
-    (typeof process !== "undefined" ? process.env?.VITE_SUPABASE_URL : undefined) ??
-    "";
-
-  const key =
-    (typeof import.meta !== "undefined" ? (import.meta as any).env?.VITE_SUPABASE_ANON_KEY : undefined) ??
-    (typeof process !== "undefined" ? process.env?.VITE_SUPABASE_ANON_KEY : undefined) ??
-    "";
-
   return !!(
-    url &&
-    key &&
-    url !== "https://placeholder-url.supabase.co"
+    SUPABASE_URL &&
+    SUPABASE_ANON_KEY &&
+    SUPABASE_URL !== "https://placeholder-url.supabase.co" &&
+    SUPABASE_ANON_KEY !== "placeholder-key"
   );
 }

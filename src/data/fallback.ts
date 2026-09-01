@@ -1,10 +1,30 @@
-// ── No asset imports ──────────────────────────────────────────────────────────
-// This file is dynamically imported inside createServerFn handlers (SSR/Vercel).
-// Vite static asset imports (import x from "*.jpg") are NOT available in the
-// Node.js server bundle. Using plain public-folder URLs instead so both the
-// server and client can resolve them. All images are copied to /public/ so they
-// are served at e.g. /hero-lab.jpg in production.
+// ── Default page content ────────────────────────────────────────────────────
+// Image URLs point to the Supabase public storage bucket.
+// Run supabase_setup.sql first, then upload the default images via the admin
+// panel or directly in Supabase Storage → "images" bucket.
+//
+// If Supabase is not configured yet, images fall back gracefully to empty
+// (the <img> tag just shows nothing until you upload via the admin panel).
+//
+// HOW IMAGE URLS WORK:
+//   https://<your-project>.supabase.co/storage/v1/object/public/images/<filename>
+//
+// The VITE_SUPABASE_URL env var is read at build time by vite.config.ts and
+// injected into import.meta.env so it works in both SSR and client bundles.
 // ─────────────────────────────────────────────────────────────────────────────
+
+// Build the Supabase storage base URL at module load time.
+// Falls back to "" so img src="" shows nothing (not a broken path).
+const S = typeof import.meta !== "undefined"
+  ? ((import.meta as any).env?.VITE_SUPABASE_URL ?? "")
+  : "";
+
+// Helper: returns the full public URL for a file in the "images" bucket,
+// or empty string if Supabase is not configured yet.
+function img(filename: string): string {
+  if (!S || S === "https://placeholder-url.supabase.co") return "";
+  return `${S}/storage/v1/object/public/images/${filename}`;
+}
 
 export const defaultHomeData = {
   hero: {
@@ -12,7 +32,7 @@ export const defaultHomeData = {
     subheading: "From scientific discovery to scalable manufacturing.",
     body: "Vesco Science develops advanced biotechnology solutions through integrated R&D, formulation, manufacturing and quality systems.",
     buttonText: "Explore Our Technology",
-    image: "/hero-lab.jpg",
+    image: img("hero-lab.jpg"),
   },
   trustBar: [
     "R&D Driven",
@@ -26,67 +46,36 @@ export const defaultHomeData = {
     mainHeading: "Where Biotechnology Meets Manufacturing",
     copy: "Vesco Science combines biotechnology research, formulation expertise and manufacturing capabilities to develop advanced solutions for regenerative medicine, aesthetics and professional healthcare markets.",
     buttonText: "Discover Vesco Science →",
-    image: "/cleanroom.jpg",
+    image: img("cleanroom.jpg"),
   },
   coreTechnology: {
     heading: "Technology at the Cellular Level",
     buttonText: "Explore All Technologies →",
     cards: [
-      {
-        num: "01",
-        title: "Exosome Technology",
-        body: "Extracellular vesicle development, purification, characterization and formulation.",
-      },
-      {
-        num: "02",
-        title: "PDRN / PN Technology",
-        body: "Advanced regenerative material platforms and formulation development.",
-      },
-      {
-        num: "03",
-        title: "Peptide Technology",
-        body: "Bioactive peptide and peptide-complex formulation capabilities.",
-      },
-      {
-        num: "04",
-        title: "HA & Regenerative Formulation",
-        body: "Hyaluronic acid and advanced aesthetic/regenerative formulations.",
-      },
+      { num: "01", title: "Exosome Technology",        body: "Extracellular vesicle development, purification, characterization and formulation." },
+      { num: "02", title: "PDRN / PN Technology",      body: "Advanced regenerative material platforms and formulation development." },
+      { num: "03", title: "Peptide Technology",         body: "Bioactive peptide and peptide-complex formulation capabilities." },
+      { num: "04", title: "HA & Regenerative Formulation", body: "Hyaluronic acid and advanced aesthetic/regenerative formulations." },
     ],
   },
   exosomeSection: {
     leftHeading: "EXOSOME TECHNOLOGY",
     leftSubheading: "From Cellular Source to Characterized Product",
-    image: "/exosome.jpg",
-    process: [
-      "Cell Source",
-      "Culture",
-      "Isolation",
-      "Purification",
-      "Characterization",
-      "Formulation",
-      "Quality Control",
-    ],
+    image: img("exosome.jpg"),
+    process: ["Cell Source", "Culture", "Isolation", "Purification", "Characterization", "Formulation", "Quality Control"],
   },
   manufacturing: {
     heading: "From R&D to Scalable Manufacturing",
     copy: "Our integrated development approach connects research, formulation, production and quality control to support the transition from concept to commercial manufacturing.",
     steps: ["R&D", "Development", "Production", "Quality"],
     buttonText: "Explore Manufacturing →",
-    image: "/vials.jpg",
+    image: img("vials.jpg"),
   },
   quality: {
     heading: "Quality Built Into Every Stage",
-    points: [
-      "Raw Material Control",
-      "Process Control",
-      "Analytical Testing",
-      "Microbiological Testing",
-      "Batch Traceability",
-      "Storage & Distribution",
-    ],
+    points: ["Raw Material Control", "Process Control", "Analytical Testing", "Microbiological Testing", "Batch Traceability", "Storage & Distribution"],
     buttonText: "Our Quality System →",
-    image: "/qc-lab.jpg",
+    image: img("qc-lab.jpg"),
   },
   finalCta: {
     heading: "Let's Build the Future of Regenerative Biotechnology",
@@ -100,7 +89,7 @@ export const defaultAboutData = {
     heading: "Advancing Biotechnology Through Science & Manufacturing",
     copy: "Vesco Science Co., Ltd. is a South Korea–based biotechnology company focused on the research, development and manufacturing of advanced solutions for regenerative medicine, aesthetics and professional healthcare applications.\n\nBy connecting scientific development with controlled manufacturing, Vesco Science works to transform innovative biological technologies into reliable, scalable and market-ready solutions.",
     buttons: ["Explore Our Technology →", "Explore Our Manufacturing →"],
-    image: "/cleanroom.jpg",
+    image: img("cleanroom.jpg"),
   },
   whoWeAre: {
     heading: "WHO WE ARE",
@@ -118,20 +107,13 @@ export const defaultAboutData = {
     heading: "OUR SCIENTIFIC APPROACH",
     subheading: "FROM BIOLOGICAL SCIENCE TO FINISHED PRODUCT",
     copy: "At Vesco Science, we follow an integrated approach that connects scientific research with product development, controlled manufacturing, and quality assurance. From the initial biological concept to the finished product, each stage is designed to support consistency, precision, and product integrity.",
-    image: "/qc-lab.jpg",
+    image: img("qc-lab.jpg"),
   },
   manufacturing: {
     heading: "MANUFACTURING",
     subheading: "From Development to Production",
     copy: "Scientific innovation becomes commercially valuable when it can be translated into a controlled and scalable manufacturing process.\n\nOur manufacturing approach connects:",
-    flow: [
-      "R&D",
-      "Product Development",
-      "Process Optimization",
-      "Production",
-      "Quality Control",
-      "Final Product",
-    ],
+    flow: ["R&D", "Product Development", "Process Optimization", "Production", "Quality Control", "Final Product"],
     footer: "This integrated structure supports the transition from product concept to commercial manufacturing.",
   },
   quality: {
